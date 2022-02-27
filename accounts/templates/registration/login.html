@@ -1,0 +1,44 @@
+<!-- templates/registration/login.html -->
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}MyChat Login{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="body text-center">
+  <form class="form-signin" method="post">
+    <h1 class="mb-4 font-weight-normal">Login</h1>
+    {% csrf_token %}
+    <label for="username" class="sr-only"> ユーザー名</label>
+    {{ form.username }}
+    {{ form.password }}
+    <div class="mb-3"></div>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">送信する</button>
+  </form>
+</div>
+<div class="signup mb-5 text-center">
+  <p>初めての方はこちら</p>
+  <button class="btn btn-lg btn-primary btn-block form-signin" type="button" id="signupButton">新規会員登録</button>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  let user_name = document.getElementsByName("username");
+  user_name[0].classList.add("form-control");
+
+  let pass_word = document.getElementsByName("password");
+  pass_word[0].classList.add("form-control");
+
+  function changeLocation() {//ここでsignupに移動
+    let url = "{% url 'signup' %}";
+    window.location.href = url;
+  }
+  let checkButton = document.getElementById('signupButton');//動かすボタンを取得
+  checkButton.addEventListener('click', changeLocation);//取得したぼたんが発火したら指定したroomサイトに移動
+</script>
+{% endblock %}

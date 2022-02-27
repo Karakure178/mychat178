@@ -1,0 +1,14 @@
+<!-- templates/home.html-->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}MyChat logout{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/logout.css' %}">
+{% endblock %}
+{% block content %}
+<div class="main text-center">
+    <p>ご利用ありがとうございました。</p>
+    <a href="{% url 'top' %}">topに戻る</a>
+</div>
+{% endblock %}

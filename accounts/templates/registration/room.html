@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/line.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1>My Chat</h1>
+<p>{{ user.username }}さん、こんにちは。</p>
+<!-- エンターキーによるボタン押下を行うために、<button>ではなく<form>と<input type="submit">を使用。
+    ボタン押下(=submit)時にページリロードが行われないように、onsubmitの設定の最後に"return false;"を追加。-->
+
+<div class="talk">
+    <ul id="list_message">
+    </ul>
+    <form action="" onsubmit="onsubmitButton_Send(); return false;">
+        Message : <input type="text" id="input_message" autocomplete="off" autofocus /><input type="submit" value="送信" />
+    </form>
+</div>
+
+
+
+<script>
+    const g_elementInputMessage = document.getElementById("input_message");
+    const g_elementListMessage = document.getElementById("list_message");
+    const user_name = "{{ user.username }}";
+
+    // WebSocketオブジェクト
+    let ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+    const room_name = "{{room}}";
+    const g_socket = new WebSocket(ws_scheme + "://" + window.location.host + "/ws/accounts/" + room_name);
+
+    // 「Send」ボタンを押したときの処理
+    function onsubmitButton_Send() {
+        // 送信用テキストHTML要素からメッセージ文字列の取得
+        let strMessage = g_elementInputMessage.value;
+        let your_name = user_name;
+        if (!strMessage) {
+            return;
+        }
+        // WebSocketを通したメッセージの送信,user_nameがちゃんと反映されない...
+        g_socket.send(JSON.stringify({ "message": strMessage, "user": your_name }));
+
+        // 送信用テキストHTML要素の中身のクリア
+        g_elementInputMessage.value = "";
+    }
+
+    //同じサイトに入室後、0.5秒後に実行,onloadだと失敗
+    window.setTimeout(function () {
+        let strMessage = user_name + "が入室しました。";
+        let your_name = user_name;
+        // WebSocketを通したメッセージの送信
+        g_socket.send(JSON.stringify({ "message": strMessage, "user": your_name }));
+
+        // 送信用テキストHTML要素の中身のクリア
+        g_elementInputMessage.value = "";
+    }, 50);
+
+    // WebSocketからメッセージ受信時の処理
+    g_socket.onmessage = (event) => {
+        // テキストデータをJSONデータにデコード
+        let data = JSON.parse(event.data);
+
+        // メッセージの整形
+        let strMessage = data["message"];
+        let your_name = data["user"];
+
+        // 拡散されたメッセージをメッセージリストに追加
+        let elementLi = document.createElement("li");
+        if (strMessage.match("が入室しました。")) {
+            //一旦こう書いてるけど、送られるコメントによってはまずい判定方法
+            elementLi.textContent = strMessage;
+        } else {
+            elementLi.textContent = strMessage + " :" + your_name;
+            //上記の書き方だとかならず同じ人になる。
+        }
+        if(your_name == user_name  && strMessage.match("が入室しました。")){
+            //このやり方だと同姓同名が無理になる。要検討
+            elementLi.classList.add("talk_middle")
+        }else if(your_name == user_name){
+            elementLi.classList.add("talk_right")
+        }else if(your_name != user_name  && strMessage.match("が入室しました。")){
+            elementLi.classList.add("talk_middle")
+        }else{
+            elementLi.classList.add("talk_left")
+        }
+
+        //g_elementListMessage.prepend(elementLi); // リストの一番上に追加
+        g_elementListMessage.append(elementLi);    // リストの一番下に追加
+    };
+
+    // WebSocketクローズ時の処理
+    g_socket.onclose = (event) => {
+        // ウェブページを閉じたとき以外のWebSocketクローズは想定外
+        console.error("Unexpected : Chat socket closed.");
+    };
+</script>
+{% endblock %}
