@@ -1,65 +1,64 @@
+/* メッセージ入力フォーム固定 */
+/* body {
+	min-height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.textMessage {
+	flex: 1;
+} */
+.wrapper {
+	position: relative;
+}
+.container {
+	position: absolute;
+	display: block;
+	bottom: 10px;
+	/* width: auto; */
+	margin: 10px;
+}
+.container2{
+
+}
+
+
 /* 全体の枠 */
 .talk {
-	background-color:rgb(113,147,193); /* LINEっぽい背景色 */
-	padding:1em;
-	overflow:auto;
+	background-color: rgb(113, 147, 193);
+	/* LINEっぽい背景色 */
+	/* padding:1em; */
+	overflow: auto;
+	height: 100%;
 }
-/* 左のトークボックス */
-.talk .talk_left:before { /* 左の丸アイコン */
-	content:'';
-	display:inline-block;
-	width:50px;
-	height:50px;
-	vertical-align:top;
-	border-radius:50%;
-	background-size:cover;
-	/* background-image:url(icon_left.jpg);  */
+
+/* 入室した際の表示 */
+.talk .talk_middle {
+	/* display:inline-block; */
+	list-style: none;
+	text-align: center;
+	width: auto;
+	padding: 10px;
 }
-.talk .talk_left p:before {  /* 左ふきだしの左三角を描画 */
-	content: '';
-	position:absolute;
-	top:8px;
-	left:-20px;
-	border: 12px solid transparent;
-	border-right:12px solid white;
+
+/* LINE風吹き出しにヘッダーをつける */
+.sbs-line {
+	/* content: '{{room}}'; */
+	color: #fff;
+	font-weight: bold;
+	/* line-height: 1; */
+	text-align: center;
+	width: 100%;
+	padding: .5em 0;
+	background: #263047;
+	/* position: absolute; */
+	/* top: 0; left: 0; */
+	display: block;
 }
-.talk .talk_left p { /* 左ふきだしの本体 */
-	display:inline-block;
-	position:relative;
-	background-color:white;
-	border-radius:10px;
-	padding:10px;
-	margin:0 0 0 10px;
+
+/* .sbs-line {
+    padding-top: calc(2em + 10px);
 }
-/* 右のトークボックス */
-.talk .talk_right:after { /* 右の丸アイコン */
-	content:'';
-	display:inline-block;
-	width:50px;
-	height:50px;
-	vertical-align:top;
-	border-radius:50%;
-	background-size:cover;
-	background-position:-10px;
-	/* background-image:url(icon_right.jpg);  */
-}
-.talk .talk_right {
-	float:right; /* 右のふきだしは全体的に右寄せ */
-	margin-top:1em;
-}
-.talk .talk_right p:after { /* 右ふきだしの右三角を描画 */
-	content: '';
-	position:absolute;
-	top:8px;
-	right:-20px;
-	border: 12px solid transparent;
-	border-left:12px solid #85e249;
-}
-.talk .talk_right p { /* 右ふきだしの本体 */
-	display:inline-block;
-	position:relative;
-	background-color:#85e249;
-	border-radius:10px;
-	padding:10px;
-	margin:0 10px 0 0;
-}
+.sbs-line+.sbs-line:before {
+    content: none;
+} */

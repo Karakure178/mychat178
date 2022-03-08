@@ -30,6 +30,13 @@ def room(request, pk):
         'room': pk
     })
 
+#room_test.htmlテスト
+def room_test(request, pk):
+    room_names = models.Room.objects.all().order_by('id')
+    return render(request, 'registration/room_test.html', {
+        'room': pk,"room_names":room_names
+    })
+
 class Logout(LogoutView):
     template_name = "registration/logout.html"
 

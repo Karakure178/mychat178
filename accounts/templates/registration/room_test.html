@@ -1,28 +1,76 @@
-{% extends 'base.html' %}
+{% extends 'base2.html' %}
 {% load static %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/line.css' %}">
-
+<link rel="stylesheet" href="{% static 'css/room_test.css' %}">
 {% endblock %}
 
 {% block content %}
 <h1>My Chat</h1>
 <p>{{ user.username }}さん、こんにちは。</p>
-<!-- エンターキーによるボタン押下を行うために、<button>ではなく<form>と<input type="submit">を使用。
-    ボタン押下(=submit)時にページリロードが行われないように、onsubmitの設定の最後に"return false;"を追加。-->
-
-<div class="talk wrapper">
-    <div class="sbs-line"> LINE </div>
-    <ul id="list_message">
+<div class="container">
+    <div class="menu">
+        <img src="{% static 'image/chat.svg' %}">
+        <img src="{% static 'image/user.svg' %}">
+        <img src="{% static 'image/users.svg' %}">
+    </div>
+    <ul class="nav">
+        {% for room_i in room_names %}
+        {% if room_i.id is 1 %}
+        <li class="li2 first">
+            <input type="radio" name="s2" id="select{{ room_i.id }}" value={{ room_i.id }} checked="">
+            <label for="select{{ room_i.id }}" class="switch-on roomButton">
+                <div class="icon">
+                    <img src="{% static 'image/s64_f_health_11_0bg.jpg' %}">
+                </div>
+                <div class="roomName">
+                    <p class="roomDis">{{ room_i.room }}</p>
+                </div>
+                <div class="check">
+                    <img src="{% static 'image/checkPoint.svg' %}">
+                </div>
+            </label>
+        </li>
+        {% else %}
+        <li class="li2">
+            <input type="radio" name="s2" id="select{{ room_i.id }}" value={{ room_i.id }}>
+            <label for="select{{ room_i.id}}" class="switch-off roomButton">
+                <div class="icon">
+                    <img src="{% static 'image/s64_f_health_11_0bg.jpg' %}">
+                </div>
+                <div class="roomName">
+                    <p class="roomDis">{{ room_i.room }}</p>
+                </div>
+                <div class="check">
+                    <img src="{% static 'image/checkPoint.svg' %}">
+                </div>
+            </label>
+        </li>
+        {% endif %}
+        {% endfor %}
     </ul>
-    <form action="" onsubmit="onsubmitButton_Send(); return false;">
-        Message : <input class = "container" type="text" id="input_message" autocomplete="off" autofocus />
-        <input class = "container2" type="submit" value="送信" />
-    </form>
+    <script>
+
+    </script>
+    <div class="header">
+        <div class="sbs-line">{{ room }}</div>
+    </div>
+    <div class="article">
+        <ul id="list_message">
+        </ul>
+        <form action="" onsubmit="onsubmitButton_Send(); return false;">
+            Message : <input class="container" type="text" id="input_message" autocomplete="off" autofocus />
+            <input class="container2" type="submit" value="送信" />
+        </form>
+    </div>
 </div>
 
+<div class="talk wrapper">
+    <!-- <div class="header">
+        <div class="sbs-line">きのこ</div>
+    </div> -->
 
+</div>
 
 <script>
     const g_elementInputMessage = document.getElementById("input_message");
@@ -31,7 +79,7 @@
 
     // WebSocketオブジェクト
     let ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-    const room_name = "{{room}}";
+    const room_name = "{{ room }}";
     const g_socket = new WebSocket(ws_scheme + "://" + window.location.host + "/ws/accounts/" + room_name);
 
     // 「Send」ボタンを押したときの処理
@@ -84,22 +132,22 @@
             elementLiName.textContent = your_name;
             //上記の書き方だとかならず同じ人になる。
         }
-        if(your_name == user_name  && strMessage.match("が入室しました。")){
+        if (your_name == user_name && strMessage.match("が入室しました。")) {
             //このやり方だと同姓同名が無理になる。要検討
             elementLi.classList.add("talk_middle")
             g_elementListMessage.append(elementLi);    // リストの一番下に追加
-        }else if(your_name == user_name){
+        } else if (your_name == user_name) {
             elementLi.classList.add("talk_right")
             g_elementListMessage.append(elementLi);    // リストの一番下に追加
-        g_elementListMessage.append(elementLiName);    // リストの一番下に追加
-        }else if(your_name != user_name  && strMessage.match("が入室しました。")){
+            g_elementListMessage.append(elementLiName);    // リストの一番下に追加
+        } else if (your_name != user_name && strMessage.match("が入室しました。")) {
             elementLi.classList.add("talk_middle")
             g_elementListMessage.append(elementLi);    // リストの一番下に追加
 
-        }else{
+        } else {
             elementLi.classList.add("talk_left")
             g_elementListMessage.append(elementLi);    // リストの一番下に追加
-        g_elementListMessage.append(elementLiName);    // リストの一番下に追加
+            g_elementListMessage.append(elementLiName);    // リストの一番下に追加
         }
 
         //g_elementListMessage.prepend(elementLi); // リストの一番上に追加

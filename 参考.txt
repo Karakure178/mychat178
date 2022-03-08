@@ -1,0 +1,182 @@
+https://www.hiramine.com/programming/chat_django_channels/index.html
+ここにかかれているプログラムをそのまんま写軽した。
+
+また、postgreSQL?を使った。
+```
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+```
+まずはwsl内にインストール
+
+```
+psql --version
+```
+インストールできていることを確認。
+
+```
+sudo -u postgres psql
+```
+初期化でエラーが。。
+`psql: error: could not connect to server: No such file or directory
+
+```
+sudo /etc/init.d/postgresql restart
+```
+restartしたら治った。でさっきのsudo -u ...を実行。
+以下のように立ち上がる。
+```
+psql (12.9 (Ubuntu 12.9-0ubuntu0.20.04.1))
+Type "help" for help.
+
+postgres=#
+```
+
+以下DBのユーザー名とパスワード
+user:kai
+pass:4423kuratoB
+
+test版:https://qiita.com/shigechiyo/items/9b5a03ceead6e5ec87ec
+database:myapp
+user:username(サイトではUSERNAMEと打っているが、小文字で認識されてた...)
+pass:PASSWORD
+
+ceratesuperuser
+user:kai
+pass:4423kuratoB
+
+細かいコマンドが全くよく分からんのでまとめる。
+ユーザーの作成とパスワードの作成
+```
+CREATE USER ユーザー名 WITH PASSWORD "パスワード";
+```
+または以下
+```
+create user ユーザー名;
+\password ユーザー名 enterボタン
+```
+
+
+ユーザーの確認
+```
+SELECT usename FROM pg_user;
+```
+```
+\du
+```
+
+ユーザーの削除
+```
+DROP USER ユーザー名;
+```
+
+データベースの確認
+```
+\l
+```
+
+他のデータベースに接続しなおす。
+```
+ \connect db_name
+```
+
+データベース日本語設定
+```
+ALTER ROLE ユーザー名 SET client_encoding TO 'utf8';
+```
+
+データベース作成
+```
+CREATE DATABASE ユーザー名;
+```
+
+
+参考
+https://qiita.com/mm36/items/1801573a478cb2865242
+https://db.just4fun.biz/?PostgreSQL/PostgreSQL%E3%81%A7%E3%83%A6%E3%83%BC%E3%82%B6%E3%82%92%E5%89%8A%E9%99%A4%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95
+https://qiita.com/syutaro/items/d08c5c7cc24cddf7694c
+
+ALTER ROLE kai SET client_encoding TO 'utf8';
+ALTER ROLE kai SET timezone TO 'Asia/Tokyo';
+
+ユーザーに権限つける
+```
+GRANT ALL PRIVILEGES ON DATABASE chat_database TO kai;
+```
+
+djangoで使うために以下をやるもののエラー。とりあえずcondaでためしているが ...KILLEDされた。
+```
+pip install psycopg2
+```
+
+バージョンを指定した所、行けた。ただし動くかは妖しい。。。
+=だめだったのでbinaryに変更した。
+```
+pip install psycopg2==2.7.5
+```
+https://stackoverflow.com/questions/47318227/cannot-install-psycopg2-ubuntu
+
+python manage.py migrateの後、
+python manage.py makemigrationsをした所エラー、urls.pyにadminの記述があるせいだった。
+記述をオフにしてmigrationsファイルを消し、migrateした所問題なく動いた。
+ただし、今度はadminにログインできない。これはpeer認証であるためのようだ。
+http://www.utsushiiro.jp/blog/archives/327
+
+まずpostgresにパスワードを設定
+```
+sudo passwd postgres
+```
+
+postgresに入り込む
+```
+su - postgres
+psql
+```
+なお、exitで抜けれた。
+
+これやるとrestartできなくなり永遠にエラーに付きまとわれるので別の方法で入る。
+
+まず初期化してから入る。
+```
+sudo /etc/init.d/postgresql restart
+psql postgres
+```
+(初期化を最初に実行した後であれば、su - postgresで入りこむことが可能だった。)
+
+# 結論：以下で行けた。
+https://qiita.com/shigechiyo/items/9b5a03ceead6e5ec87ec
+```
+pip install psycopg2-binary
+sudo passwd postgres  
+→パスワード設定
+cd /etc/postgresql/12/main
+sudo vim pg_hba.conf
+```
+以下vimの変更
+写真.カーソル部位をpeerからmd5に変更している。
+
+以下コマンドプロンぷとの続き(かならず初期化すること！)
+```
+sudo /etc/init.d/postgresql restart
+sudo -u postgres psql
+CREATE DATABASE myapp;
+CREATE USER USERNAME WITH PASSWORD 'PASSWORD';
+ALTER ROLE USERNAME SET client_encoding TO 'utf8';
+ALTER ROLE USERNAME SET default_transaction_isolation TO 'read committed';
+ALTER ROLE USERNAME SET timezone TO 'Asia/Tokyo';
+GRANT ALL PRIVILEGES ON DATABASE myapp TO USERNAME;
+```
+後はサイトの通り、djangoの設定すればok!
+注意点としてsetting.pyは以下のようにする。
+```
+#なぜかUSERNAMEはusernameとして認識されていたため変更
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'myapp',
+        'USER': 'username',
+        'PASSWORD': 'PASSWORD',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}
+```
