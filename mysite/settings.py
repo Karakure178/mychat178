@@ -80,8 +80,8 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'myapp',
-        'USER': 'username',
+        'NAME': 'mychannel',
+        'USER': 'channeluser',
         'PASSWORD': 'PASSWORD',
         'HOST': 'localhost',
         'PORT': '',
@@ -139,6 +139,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
+            #"hosts": [("127.0.0.1", 5432)],
             "hosts": [("127.0.0.1", 6379)],
             #"hosts": [os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379/1')],
         },
