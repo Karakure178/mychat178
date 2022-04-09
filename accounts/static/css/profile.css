@@ -1,0 +1,84 @@
+html {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    margin: 0 auto;
+    display: grid;
+    grid-template-rows: 80px 776px 1fr; 
+}
+
+.homes{
+    height: 100%;
+    width: 100%;
+}
+
+/* 全体のgrid分け */
+.container {
+    display: grid;
+    margin: 0%;
+    height: 100%;
+    width: 100%;
+    grid-template-columns: 60px 1fr;
+    grid-template-rows: 180px 1fr;
+    gap: 0px;
+    grid-template-areas:
+        "menu header"
+        "menu profile";
+    background-color: aqua;
+    padding: 0%;
+}
+
+.menu {
+    grid-area: menu;
+    background-color: #263047;
+    padding: 10px;
+}
+
+/* メニューバー */
+.menu img {
+    width: 40px;
+    max-width: 40px;
+    padding-bottom: 20px;
+}
+/* メニューバーここまで */
+
+.header {
+    grid-area: header;
+    background: blue;
+    margin-top:10px;
+    margin-left:10px;
+    margin-right:10px;
+}
+
+.profile {
+    grid-area: profile;
+    background-color: rgb(113, 147, 193);
+    overflow-y: auto;
+    margin-top:10px;
+    margin-left:10px;
+    margin-right:10px;    
+}
+
+
+/* プロフィール編集以下 */
+.icon_edit{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.icon_edit img{
+    width: 100px;
+    margin-left: 10%;
+    margin-top: 3%;
+    border-radius: 100vh;
+}
+
+.btn_edit{
+    border-radius: 100vh;
+    font-size: large;
+    padding: 0%;
+    margin: 30px;
+}
+/* プロフィール編集ここまで */

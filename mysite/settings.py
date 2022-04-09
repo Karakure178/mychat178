@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     "channels",
     'django_cleanup.apps.CleanupConfig',# django-cleanup
+    'django_better_admin_arrayfield',
 ]
 
 MIDDLEWARE = [
@@ -80,8 +81,8 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'mychannel',
-        'USER': 'channeluser',
+        'NAME': 'myapp',
+        'USER': 'username',
         'PASSWORD': 'PASSWORD',
         'HOST': 'localhost',
         'PORT': '',
