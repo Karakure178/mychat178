@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
-#from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy,reverse
 from django.views import generic
 from . import models
@@ -67,83 +66,66 @@ class SignUpView(generic.CreateView):
 class SignUpdoneView(generic.TemplateView):
     template_name = "registration/signup_done.html"
 
-# def chat_test( request ):
-#     return render( request, 'chat/chat_test.html' )
-
 class ChatTestView(LoginRequiredMixin, generic.TemplateView):
     template_name =  'chat/chat_test.html'
+    # form_class = forms.ChatAddForm
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
+        #自分が登録されてるルームのみ表示
+        who = models.User.objects.filter(id=self.request.user.id)
+        data = models.Room.objects.filter(meta__in=who)
+        
+        #アクセスしてるusernameでchatを検索しヒットしたオブジェクトをdata_chatsに突っ込む
+        #request_username = models.User.objects.get(id=self.request.user.id)
+        request_chats = models.Chat.objects.all()#models.Chat.objects.filter(name=request_username)
+        context["room_names"] =  data
 
+        #data_chatsをそれぞれのルームへ分割arrayしたい、今持ってるルーム数知りたい
+        room_data = self._rooms_get(data)
+        rooms_chats =  self._rooms_chat_get(room_data,request_chats)
+        """
+        rooms_chat[ルーム数][ [ユーザ名],[text],[時間] ]
+        """
+        context["rooms"] = room_data #所属するルーム達
+        context["room_chats"] = rooms_chats #所属するルームとチャット内容
 
+        return context
 
+    #ユーザーが所属するルームのみ取得
+    def _rooms_get(self,data):
+        rooms = list()
+        for i in data:
+            if i.room not in rooms:
+                print(i.room)
+                rooms.append(i.room)
+        return rooms
 
+    #ユーザーが所属するルームののchatlist(ユーザ名,ルーム名,チャット内容)を返却
+    def _rooms_chat_get(self,room_data,chat_data):
+        chats = [[] for i in range(len(room_data))]
+        for i in chat_data:
+            room_index = room_data.index(i.room)#ただのlistに変換
+            chats[room_index].append([i.name,i.text,i.time.strftime('%Y/%m/%d %H:%M:%S') ])
+        return chats
 
-
-# from django.shortcuts import render
-
-# # Create your views here.
-
-# def chat( request ):
-#     return render( request, 'chat/chat.html' )
-
-# def chat_test( request ):
-#     return render( request, 'chat/chat_test.html' )
-
-
-
-# from django.views import generic
-# from django.contrib import messages
-# from django.contrib.auth.mixins import LoginRequiredMixin
-# from . import models
-# from . import forms
-
-# class HomeView(generic.FormView):
-#     posted_data = {"text": "",
-#                "select_part": []}
-#     template_name = "home.html"
-#     # form_class = forms.ExampleForm
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context["user"] =  models.User.objects.all().order_by("id")[0]
-#         context["followers"] = models.User.objects.all().order_by("id")[0].followers.all()
-#         context["followees"] = models.User.objects.all().order_by("id")[0].followees.all()
-
-#         # print(context["user"].followers)
-#         # print(type(context["user"].followers.all()))
-#         # print(context["user"])
-#         return context
-#     def form_valid(self, form):
-#         self.posted_data["text"] = form.data.get("follower")
-#         return super().form_valid(form)
-
-
-# class TestView(generic.FormView):
-#     template_name = 'home2.html'
-#     form_class = forms.ExampleForm
-#     success_url = '/admin'  # リダイレクト先URL
-#     def form_valid(self, form):
-#         form.save()  # 保存処理など
-#         messages.add_message(self.request, messages.SUCCESS, '登録しました！')
-#         return super().form_valid(form)
-
-
-# class UserChangeView(LoginRequiredMixin, generic.FormView):
-#     template_name = 'change.html'
-#     form_class = forms.UserChangeForm
-#     # success_url = reverse_lazy('accounts:profile')
+class UserChangeView(LoginRequiredMixin, generic.FormView):
+    template_name = 'registration/profile_edit.html'
+    form_class = forms.UserChangeForm
+    success_url = reverse_lazy('accounts:profile')
     
-#     def form_valid(self, form):
-#         #formのupdateメソッドにログインユーザーを渡して更新
-#         form.update(user=self.request.user)
-#         return super().form_valid(form)
+    def form_valid(self, form):
+        #formのupdateメソッドにログインユーザーを渡して更新
+        form.update(user=self.request.user)
+        return super().form_valid(form)
 
-#     def get_form_kwargs(self):
-#         kwargs = super().get_form_kwargs()
-#         # 更新前のユーザー情報をkwargsとして渡す
-#         kwargs.update({
-#             'email' : self.request.user.email,
-#             'first_name' : self.request.user.first_name,
-#             'last_name' : self.request.user.last_name,
-#         })
-#         return kwargs
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        # 更新前のユーザー情報をkwargsとして渡す
+        kwargs.update({
+            'email' : self.request.user.email,
+            'first_name' : self.request.user.first_name,
+            'last_name' : self.request.user.last_name,
+        })
+        return kwargs

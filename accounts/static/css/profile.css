@@ -7,6 +7,8 @@ body {
     margin: 0 auto;
     display: grid;
     grid-template-rows: 80px 776px 1fr; 
+    background-color: white;
+
 }
 
 .homes{
@@ -26,7 +28,6 @@ body {
     grid-template-areas:
         "menu header"
         "menu profile";
-    background-color: aqua;
     padding: 0%;
 }
 

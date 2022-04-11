@@ -1,348 +1,232 @@
-<!DOCTYPE html>
-<html>
+{% extends 'base2.html' %}
 {% load static %}
 
-<head>
-    <meta charset="utf-8" />
-    <title>My Chat</title>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/chat_test.css' %}">
+{% endblock %}
 
-    <style type="text/css">
-        input:read-only,
-        textarea:read-only {
-            background-color: #CCC;
-        }
+{% block content %}
+<div class="container">
+    <div class="menu">
+        <a href="{% url 'chat_test' %}"><img src="{% static 'image/chat.svg' %}"></a>
+        <a href="{% url 'profile' %}"><img src="{% static 'image/user.svg' %}"></a>
+        <img src="{% static 'image/users.svg' %}">
+    </div>
+    <ul class="nav">
+        {% for room_i in room_names %}
+        {% if forloop.counter is 1 %}
+        <li class="li2 first">
+            <input type="radio" name="s2" id="select{{ room_i.id }}" value={{ room_i.room }} checked="">
+            <label for="select{{ room_i.id }}" class="switch-on roomButton">
+                <div class="icon">
+                    <img src="{% static 'image/s64_f_health_11_0bg.jpg' %}">
+                </div>
+                <div class="roomName">
+                    <p class="roomDis"> {{ room_i.room }} </p>
+                </div>
+                <div class="check">
+                    <img src="{% static 'image/checkPoint.svg' %}">
+                </div>
+            </label>
+        </li>
+        {% else %}
+        <li class="li2">
+            <input type="radio" name="s2" id="select{{ room_i.id }}" value={{ room_i.room }}>
+            <label for="select{{ room_i.id}}" class="switch-off roomButton">
+                <div class="icon">
+                    <img src="{% static 'image/s64_f_health_11_0bg.jpg' %}">
+                </div>
+                <div class="roomName">
+                    <p class="roomDis">{{ room_i.room }}</p>
+                </div>
+                <div class="check">
+                    <img src="{% static 'image/checkPoint.svg' %}">
+                </div>
+            </label>
+        </li>
+        {% endif %}
+        {% endfor %}
+    </ul>
 
-        html {
-            height: 100%;
-            /* 画面全体を使用する場合のお約束 */
-        }
-
-        body {
-            margin: 0;
-            /* 画面全体を使用する場合のお約束 */
-            padding: 0;
-            /* 画面全体を使用する場合のお約束 */
-            min-height: 100%;
-            /* 画面全体を使用する場合のお約束 */
-            height: 100%;
-            /* 画面全体を使用する場合のお約束 */
-        }
-
-        #div_container {
-            min-height: 100vh;
-            /* 画面全体を使用する場合のお約束 */
-            height: 100%;
-            /* 画面全体を使用する場合のお約束 */
-            display: flex;
-            /* 子要素をflex配置とする */
-            flex-direction: column;
-            /* 子要素のflex配置の方向は列方向（縦方向）*/
-        }
-
-        #div_header {
-            margin: 0px 8px;
-            /* bodyで「margin: 0」にしたのを戻す（ブラウザ領域境界に余白なしでHTML要素が表示されるのを余白ありに戻す） */
-        }
-
-        #div_main {
-            flex: 1;
-            /*親要素の（縦方向の）残り全部を使う*/
-        }
-
-        /* #div_join_screen {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            z-index: 10;
-            background-color: #888;
-        } */
-
-        #div_chat_screen {
-            margin: 0px 8px;
-            /* bodyで「margin: 0」にしたのを戻す（ブラウザ領域境界に余白なしでHTML要素が表示されるのを余白ありに戻す） */
-            display: block;
-            /* 初期状態非表示 */
-        }
-
-        #text_roomname {
-            background-color: aqua;
-            height: 100%;
-            width: 50px;
-        }
-
-        /* input見た目実装 */
-        li {
-            list-style: none;
-        }
-
-        .li2 input {
-            display: none;
-            /* トグル非表示 */
-        }
-
-        .li2 label {
-            float: left;
-            cursor: pointer;
-            /* width: 60px; */
-            margin: 0;
-            /* padding-bottom: 5px; */
-            background: #fff;
-            color: black;
-            font-size: 16px;
-            text-align: center;
-            line-height: 1;
-            transition: .2s;
-        }
-
-        .roomButton {
-            display: grid;
-            grid-template-columns: 55px 80px 1fr;
-            padding: 0%;
-            margin: 0%;
-            width: 100%;
-            height: 60px;
-        }
-
-        .icon {
-            padding-top: 5px;
-        }
-
-        .icon img {
-            width: 50px;
-            max-width: 50px;
-            background: #fff;
-            border: none;
-            border-radius: 50%;
-            box-shadow: none;
-            /* padding-top: 5px; */
-            /* left: 5px; */
-        }
-
-        /* ルーム名表示 ...折り返し表示できてない */
-        .roomName p {
-            font-weight: bold;
-            margin-top: 10px;
-            text-align: left;
-        }
-
-        /* 通知ボタン見た目*/
-        .check {
-            /* モダンブラウザ限定 */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .check img {
-            /* padding-left: 5px; */
-            /* margin-top: 5px; */
-            width: 20px;
-            margin: 0 auto;
-        }
-
-        /* 通知ボタン機能実装 */
-        .li2 label:first-of-type {
-            border-radius: 3px 0 0 3px;
-        }
-
-        .li2 label:last-of-type {
-            border-radius: 0 3px 3px 0;
-        }
-
-        .li2 input[type="radio"]:checked+.switch-on {
-            background-color: darkgray;
-            color: #fff;
-        }
-
-        .li2 input[type="radio"]:checked+.switch-off {
-            background-color: darkgray;
-            color: #fff;
-        }
-    </style>
-</head>
-
-<body>
-    <div id="div_container">
-
-        <div id="div_header">
-            <h1>My Chat</h1>
-        </div>
-
-        <div id="div_main">
-            <li class="li2 first">
-                <input type="radio" name="s2" id="select1" value="きのこ" checked="">
-                <label for="select1" class="switch-on roomButton">
-                    <div class="icon">
-                        <img src="{% static 'image/s64_f_health_11_0bg.jpg' %}">
-                    </div>
-                    <div class="roomName">
-                        <p class="roomDis">きのこ</p>
-                    </div>
-                    <div class="check">
-                        <img src="{% static 'image/checkPoint.svg' %}">
-                    </div>
-                </label>
-            </li>
-            <li class="li2">
-                <input type="radio" name="s2" id="select2" value="good">
-                <label for="select2" class="switch-off roomButton">
-                    <div class="icon">
-                        <img src="{% static 'image/s64_f_health_11_0bg.jpg' %}">
-                    </div>
-                    <div class="roomName">
-                        <p class="roomDis">good</p>
-                    </div>
-                    <div class="check">
-                        <img src="{% static 'image/checkPoint.svg' %}">
-                    </div>
-                </label>
-            </li>
-            <div id="div_chat_screen">
-                <button onclick="onclickButton_LeaveChat()">Leave Chat.</button><br />
-                User name : <input type="text" id="text_username" readonly="readonly"><br />
-                <!-- Room Name : <input type="text" id="text_roomname" readonly="readonly"><br /> -->
-                Room Name : <li id="text_roomname"></li>
-                <form action="" onsubmit="onsubmitButton_Send(); return false;">
-                    Message : <input type="text" id="input_message" autocomplete="off" autofocus /><input type="submit"
-                        value="Send" />
-                </form>
-
-                <ul id="list_message"></ul>
-
-            </div>
+    <div class="header">
+        <div class="sbs-line" id="text_roomname">
         </div>
     </div>
+    <div class="article">
+        <div class="chat_list">
+            <div id="text_username"> "{{ user.username }}"</div>
+            <ul id="list_message"></ul>
+        </div>
 
-    <script>
-        //const g_elementDivJoinScreen = document.getElementById("div_join_screen");
-        const g_elementDivChatScreen = document.getElementById("div_chat_screen");
-        const g_elementInputUserName = document.getElementById("input_username");
-        const g_elementInputRoomName = document.getElementById("input_roomname");
+        <div class="message_input">
+            <form action="" onsubmit="onsubmitButton_Send(); return false;">
+                <!-- Message : <input type="text" id="input_message" autocomplete="off" autofocus /> -->
+                <textarea  id="input_message" rows="4" cols="40">感想を記入します。</textarea>
+                <input type="submit" value="送信" />
+            </form>
+        </div>
 
-        const g_elementTextUserName = document.getElementById("text_username");
-        const g_elementTextRoomName = document.getElementById("text_roomname");
+    </div>
 
-        const g_elementInputMessage = document.getElementById("input_message");
-        const g_elementListMessage = document.getElementById("list_message");
+</div>
+
+<script>
+    //const g_elementDivJoinScreen = document.getElementById("div_join_screen");
+    //const g_elementDivChatScreen = document.getElementById("div_chat_screen");
+    const g_elementInputUserName = document.getElementById("input_username");
+    const g_elementInputRoomName = document.getElementById("input_roomname");
+
+    const g_elementTextUserName = document.getElementById("text_username");
+    const g_elementTextRoomName = document.getElementById("text_roomname");
+
+    const g_elementInputMessage = document.getElementById("input_message");
+    const g_elementListMessage = document.getElementById("list_message");
 
 
-        // WebSocketオブジェクト
-        let ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-        const g_socket = new WebSocket(ws_scheme + "://" + window.location.host + "/ws/chat/");
+    // WebSocketオブジェクト
+    let ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+    const g_socket = new WebSocket(ws_scheme + "://" + window.location.host + "/ws/chat/");
 
-        //ルーム名に日本語が選択できるようにASCIIへ文字列を変換している。
-        function asciiAt(str) {
-            let roomAs;
-            for (let i = 0; i < str.length; i++) {
-                if (i != 0) {
-                    roomAs = roomAs + "." + str.charCodeAt(i);
+    //ルーム名に日本語が選択できるようにASCIIへ文字列を変換(channel_layer.group_add()関数の仕様により)
+    function asciiAt(str) {
+        let roomAs;
+        for (let i = 0; i < str.length; i++) {
+            if (i != 0) {
+                roomAs = roomAs + "." + str.charCodeAt(i);
 
-                } else {
-                    roomAs = str.charCodeAt(i);
-                }
+            } else {
+                roomAs = str.charCodeAt(i);
             }
-            console.log(roomAs);
-            return roomAs;
         }
+        // console.log(roomAs);
+        return roomAs;
+    }
 
-        function asciiDecode(str){
-            let roomDecode = "";
-            decode = str.split('.');
-            for(let i =0; i < decode.length; i++){
-                roomDecode = roomDecode + String.fromCharCode(decode[i]);
-                //roomAs + fromCharCode(decode[i]);
+    //ASCIIを文字列に変換
+    function asciiDecode(str) {
+        let roomDecode = "";
+        decode = str.split('.');
+        for (let i = 0; i < decode.length; i++) {
+            roomDecode = roomDecode + String.fromCharCode(decode[i]);
+            //roomAs + fromCharCode(decode[i]);
+        }
+        return roomDecode;
+    }
+
+    function onsubmitButton_JoinChat(area) {
+        let strInputUserName = "{{ user.username }}";
+        if (!strInputUserName) {
+            return;
+        }
+        g_elementTextUserName.value = strInputUserName;
+
+        // ルーム名,全部ASIIに変換
+        let strInputRoomName = asciiAt(area.value);
+        //asciiAt(g_elementInputRoomName.value);
+
+        //ルーム名をliに入れる
+        g_elementTextRoomName.value = strInputRoomName;
+        g_elementTextRoomName.textContent = area.value;
+        //g_elementInputRoomName.value;//ルーム名入れる
+
+        // サーバーに"join"を送信
+        g_socket.send(JSON.stringify({ "data_type": "join", "username": strInputUserName, "roomname": strInputRoomName }));
+
+        //ルーム切り替え時に存在するチャットログを全て削除する
+        //console.log("mohemohe");
+        while(g_elementListMessage.lastChild){
+            g_elementListMessage.removeChild(g_elementListMessage.lastChild);
+        }
+        
+        //以下にルームのDB記述を追加
+        //現在のroomindexを取り出す
+        let et_room = {{ rooms|safe }};
+        let room_index;
+        for(let i = 0;i<et_room.length;i++){
+            if(area.value == et_room[i]){
+                room_index = i;
             }
-            return roomDecode;
         }
-
-        function onsubmitButton_JoinChat(area) {
-            let strInputUserName = "{{ user.username }}";
-            if (!strInputUserName) {
-                return;
-            }
-            g_elementTextUserName.value = strInputUserName;
-
-            // ルーム名,全部ASIIに変換
-            let strInputRoomName = asciiAt(area.value);
-            //asciiAt(g_elementInputRoomName.value);
-
-            //ルーム名をliに入れる
-            g_elementTextRoomName.value = strInputRoomName;
-            g_elementTextRoomName.textContent = area.value;
-            //g_elementInputRoomName.value;//ルーム名入れる
-
-            // サーバーに"join"を送信
-            g_socket.send(JSON.stringify({ "data_type": "join", "username": strInputUserName, "roomname": strInputRoomName }));
-            //g_socket.send(JSON.stringify({ "data_type": "join", "username": "kai", "roomname": "kinoko" }));
-        }
-
-        //ボタンが押されている方にヘッダーを変える
-        let radio_btns = document.querySelectorAll(`input[type='radio']`);
-        console.log(radio_btns[0].value);
-        // onsubmitButton_JoinChat(radio_btns[0]);//error... なぜ？
-
-
-        //もしラジオボタンが変化したらルームを変更する。
-        for (let target of radio_btns) {
-            target.addEventListener(`change`, function () {
-                console.log(target.value);
-                onsubmitButton_JoinChat(target);
-            });
-            //onsubmitButton_JoinChat(target)
-        }
-
-        // 「Send」ボタンを押したときの処理
-        function onsubmitButton_Send() {
-            // 送信用テキストHTML要素からメッセージ文字列の取得
-            let strMessage = g_elementInputMessage.value;
-            if (!strMessage) {
-                return;
-            }
-
-            // WebSocketを通したメッセージの送信
-            g_socket.send(JSON.stringify({ "message": strMessage }));
-
-            // 送信用テキストHTML要素の中身のクリア
-            g_elementInputMessage.value = "";
-        }
-
-        // WebSocketからメッセージ受信時の処理
-        g_socket.onmessage = (event) => {
-            // 自身がまだ参加していないときは、無視。
-            if (!g_elementTextUserName.value) {
-                return;
-            }
-
-            // テキストデータをJSONデータにデコード
-            let data = JSON.parse(event.data);
-
-            // メッセージの整形
-            //let strMessage = data["message"];
-            let strMessage = data["datetime"] + " - [" + data["username"] + "] " + data["message"] + "[ルーム名:" + asciiDecode(data["roomname"]) + "]";
-
-            // 拡散されたメッセージをメッセージリストに追加
+        //現在のルームDBを表示する
+        let room_chat = {{ room_chats|safe }};
+        //console.log(29393);
+        for(let i = 0; i<room_chat[room_index].length; i++){
             let elementLi = document.createElement("li");
-            elementLi.textContent = strMessage;
-            g_elementListMessage.prepend(elementLi); // リストの一番上に追加
-            //g_elementListMessage.append( elementLi );    // リストの一番下に追加
-        };
-
-        // WebSocketクローズ時の処理
-        g_socket.onclose = (event) => {
-            // ウェブページを閉じたとき以外のWebSocketクローズは想定外
-            console.error("Unexpected : Chat socket closed.");
-        };
-
-        //https://stackoverflow.com/questions/23051416/uncaught-invalidstateerror-failed-to-execute-send-on-websocket-still-in-co
-        //https://otiai10.hatenablog.com/entry/2013/06/21/191615
-        //ソケット準備完了後発火している。
-        g_socket.onopen = function (ev) {
-            console.log('On Open Event =>', ev);
-            console.log('DOM fully loaded and parsed');
-            onsubmitButton_JoinChat(radio_btns[0]);
+            elementLi.class = "message_child";
+            elementLi.textContent = room_chat[room_index][i][2] + " - [" + room_chat[room_index][i][0] + "] " + room_chat[room_index][i][1];
+            g_elementListMessage.append(elementLi);    // リストの一番下に追加
         }
-    </script>
-</body>
+    }
 
-</html>
+    //ボタンが押されている方にヘッダーを変える
+    let radio_btns = document.querySelectorAll(`input[type='radio']`);
+    // console.log(radio_btns[0].value);
+
+
+    //もしラジオボタンが変化したらルームを変更する。
+    //ついでにDBも読み込む
+    for (let target of radio_btns) {
+        target.addEventListener(`change`, function () {
+            console.log(target.value);
+            onsubmitButton_JoinChat(target);
+        });
+        //onsubmitButton_JoinChat(target)
+    }
+
+    // 「Send」ボタンを押したときの処理
+    function onsubmitButton_Send() {
+        // 送信用テキストHTML要素からメッセージ文字列の取得
+        let strMessage = g_elementInputMessage.value;
+        if (!strMessage) {
+            return;
+        }
+
+        // WebSocketを通したメッセージの送信
+        g_socket.send(JSON.stringify({ "message": strMessage }));
+
+        // 送信用テキストHTML要素の中身のクリア
+        g_elementInputMessage.value = "";
+    }
+
+    // WebSocketからメッセージ受信時の処理
+    g_socket.onmessage = (event) => {
+        // テキストデータをJSONデータにデコード
+        let data = JSON.parse(event.data);
+
+        // 自身がまだ参加していないときは、無視。
+        if (g_elementTextRoomName.value != data["roomname"]) {
+            console.log("はいってませーん");
+            return;
+        }
+        console.log(g_elementTextRoomName.value+"::"+ data["roomname"]);
+
+
+
+        // メッセージの整形
+        let strMessage = data["datetime"] + " - [" + data["username"] + "] " + data["message"] + "[ルーム名:" + asciiDecode(data["roomname"]) + "]";
+
+        // 拡散されたメッセージをメッセージリストに追加
+        let elementLi = document.createElement("li");
+        // elementLi.class = "message_child";
+        elementLi.textContent = strMessage;
+
+        //g_elementListMessage.prepend(elementLi); // リストの一番上に追加
+        g_elementListMessage.append(elementLi);    // リストの一番下に追加
+    };
+
+    // WebSocketクローズ時の処理
+    g_socket.onclose = (event) => {
+        // ウェブページを閉じたとき以外のWebSocketクローズは想定外
+        console.error("Unexpected : Chat socket closed.");
+    };
+
+    //https://stackoverflow.com/questions/23051416/uncaught-invalidstateerror-failed-to-execute-send-on-websocket-still-in-co
+    //https://otiai10.hatenablog.com/entry/2013/06/21/191615
+    //ソケット準備完了後発火している。
+    g_socket.onopen = function (ev) {
+        console.log('On Open Event =>', ev);
+        console.log('DOM fully loaded and parsed');
+        onsubmitButton_JoinChat(radio_btns[0]);
+    }
+</script>
+{% endblock %}

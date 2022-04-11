@@ -180,3 +180,33 @@ DATABASES = {
     }
 }
 ```
+
+
+        <li class="li2 first">
+            <input type="radio" name="s2" id="select1" value="きのこ" checked="">
+            <label for="select1" class="switch-on roomButton">
+                <div class="icon">
+                    <img src="{% static 'image/s64_f_health_11_0bg.jpg' %}">
+                </div>
+                <div class="roomName">
+                    <p class="roomDis">きのこ</p>
+                </div>
+                <div class="check">
+                    <img src="{% static 'image/checkPoint.svg' %}">
+                </div>
+            </label>
+        </li>
+        <li class="li2">
+            <input type="radio" name="s2" id="select2" value="good">
+            <label for="select2" class="switch-off roomButton">
+                <div class="icon">
+                    <img src="{% static 'image/s64_f_health_11_0bg.jpg' %}">
+                </div>
+                <div class="roomName">
+                    <p class="roomDis">good</p>
+                </div>
+                <div class="check">
+                    <img src="{% static 'image/checkPoint.svg' %}">
+                </div>
+            </label>
+        </li>

@@ -7,8 +7,6 @@
 
 {% block content %}
 <div class="homes">
-    <img>
-    <h1>マイページ</h1>
     <div class="container">
         <div class="menu">
             <a href="{% url 'chat_test' %}"><img src="{% static 'image/chat.svg' %}"></a>
@@ -23,13 +21,13 @@
             <div class="icon_edit">
                 <img src="{{ user.icon.url }}">
                 <div></div>
-                <button class="btn_edit">プロフィール編集</button>
+                <button class="btn_edit" onClick="changeProfileEdit()">プロフィール編集</button>
             </div>
             <h2>{{ user.username }}</h2>
             <p>ルームの選択</p>
             <select id="roomList" size=2>
                 {% for i in room %}
-                <option value="{{ i.room}}">{{i.room}} </option>
+                <option value="{{ i.room }}">{{ i.room }} </option>
                 {% endfor %}
             </select>
             <button type="button" id="checkButton" class="btn">
@@ -53,5 +51,9 @@
 
     let checkButton = document.getElementById('checkButton');//動かすボタンを取得
     checkButton.addEventListener('click', changeLocation);//取得したぼたんが発火したら指定したroomサイトに移動
+
+    function changeProfileEdit() {//profile_editへ移動
+        window.location.href = "http://127.0.0.1:8000"+'{% url "profile_edit"  %}';
+    }
 </script>
 {% endblock %}
