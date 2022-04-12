@@ -1,0 +1,162 @@
+ol, ul {
+    list-style: none
+}
+
+a {
+    text-decoration: none;
+    color: #222;
+}
+
+body {
+    /* headerを狭くする↓ */
+    line-height: 1;
+}
+
+/* 元の調整 headerの文字調節してる */
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+}
+
+/* ブランド名 */
+.brand {
+    font-weight: bold;
+    font-size: 30px;
+}
+
+/* MyChatの位置とか */
+.wrapper {
+    max-width: 1140px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.site-header {
+    position: relative;
+    background-color: #def7ff;
+}
+
+.site-header__wrapper {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+@media (min-width: 600px) {
+    .site-header__wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+}
+
+@media (min-width: 600px) {
+    .navs__wrapper {
+        display: flex;
+    }
+}
+
+/* HOME ABOUT...の位置 */
+.navs__item a {
+    display: block;
+    padding: 1.5rem 1rem;
+}
+
+
+/*hamburger(ハンバーガーアイコん*/
+@media (max-width: 599px) {
+    .hamburger {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        width: 50px;
+        height: 40px;
+        cursor: pointer;
+        z-index: 300;
+    }
+
+    .hamburger__line {
+        position: absolute;
+        width: 50px;
+        height: 3px;
+        right: 0;
+        background-color: #000;
+        transition: all 0.5s;
+    }
+
+    .hamburger__line--1 {
+        top: 1px;
+    }
+
+    .hamburger__line--2 {
+        top: 18px;
+    }
+
+    .hamburger__line--3 {
+        top: 36px;
+    }
+
+    /*ハンバーガーがクリックされたら線をアニメーション*/
+    .open .hamburger__line--1 {
+        transform: rotate(-45deg);
+        top: 11px;
+    }
+
+    .open .hamburger__line--2 {
+        opacity: 0;
+    }
+
+    .open .hamburger__line--3 {
+        transform: rotate(45deg);
+        top: 11px;
+    }
+
+    /*sp-nav(ナビ)*/
+    .sp-nav {
+        position: fixed;
+        right: -100%;
+        /*ハンバーガーがクリックされる前はWindow右側に隠す*/
+        top: 0;
+        width: 40%;
+        /* 出てくるスライドメニューの幅 */
+        height: 100vh;
+        background-color: #fff;
+        transition: all 0.5s;
+        z-index: 200;
+        overflow-y: auto;
+        /* メニューが多くなったらスクロールできるように */
+    }
+
+    /*ハンバーガーがクリックされたら右からスライド*/
+    .open .sp-nav {
+        right: 0;
+    }
+
+
+    /*
+    black-bg(ハンバーガーメニュー解除用bg)
+    =================================== */
+    .black-bg {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 5;
+        background-color: #000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.5s;
+        cursor: pointer;
+        z-index: 100;
+    }
+
+    /*ハンバーガーメニューが開いたら表示*/
+    .open .black-bg {
+        opacity: 0.3;
+        visibility: visible;
+    }
+}
