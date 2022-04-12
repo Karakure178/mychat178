@@ -1,5 +1,7 @@
 from pathlib import Path
 import os
+import dj_database_url
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -52,7 +54,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'mysite.wsgi.application'
 
 
-import dj_database_url
 db_from_env = dj_database_url.config()
 DATABASES = {
         'default': dj_database_url.config()
@@ -138,4 +139,4 @@ except ImportError:
 if not DEBUG:
     SECRET_KEY = os.environ['SECRET_KEY']
     import django_heroku
-    django_heroku.settings(locals())
+    django_heroku.settings(locals(), secret_key=False, staticfiles=False)
