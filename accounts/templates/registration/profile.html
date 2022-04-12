@@ -1,0 +1,61 @@
+{% extends 'base2.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="homes">
+    <div class="container">
+        <div class="menu">
+            <a href="{% url 'chat_test' %}"><img src="{% static 'image/chat.svg' %}"></a>
+            <img src="{% static 'image/user.svg' %}">
+            <img src="{% static 'image/users.svg' %}">
+        </div>
+
+        <div class="header">
+            <div class="header_pic">
+                <img src="{{ user.header.url }}">
+            </div>
+        </div>
+        <div class="profile">
+            <div class="icon_edit">
+                <img src="{{ user.icon.url }}">
+                <div></div>
+                <button class="btn_edit" onClick="changeProfileEdit()">プロフィール編集</button>
+            </div>
+            <h2>{{ user.username }}</h2>
+            <p>ルームの選択</p>
+            <select id="roomList" size=2>
+                {% for i in room %}
+                <option value="{{ i.room }}">{{ i.room }} </option>
+                {% endfor %}
+            </select>
+            <button type="button" id="checkButton" class="btn">
+                OK
+            </button>
+            <p><a href="{% url 'logout' %}">Log Out</a></p>
+            <p><a href="{% url 'room_add' %}">ルーム新規作成</a></p>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    function changeLocation() {//ここでルーム移動を指定
+        window.location.href = "http://127.0.0.1:8000/accounts/room/" + roomSelect.value;
+    }
+    let roomSelect = document.getElementById('roomList');//htmlのoptionから指定されたvalueを取得
+    //roomSelect.options[2].selected = true;//謎
+
+    let checkButton = document.getElementById('checkButton');//動かすボタンを取得
+    checkButton.addEventListener('click', changeLocation);//取得したぼたんが発火したら指定したroomサイトに移動
+
+    function changeProfileEdit() {//profile_editへ移動
+        window.location.href = "http://127.0.0.1:8000"+'{% url "profile_edit"  %}';
+    }
+</script>
+{% endblock %}

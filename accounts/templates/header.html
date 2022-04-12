@@ -1,0 +1,24 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/header.css' %}">
+<header class="site-header">
+    <div id="nav-wrapper" class="wrapper site-header__wrapper">
+        <a href="#" class="brand">MyChat</a>
+        <div class="hamburger" id="js-hamburger">
+            <span class="hamburger__line hamburger__line--1"></span>
+            <span class="hamburger__line hamburger__line--2"></span>
+            <span class="hamburger__line hamburger__line--3"></span>
+        </div>
+        <nav class="sp-nav">
+            <ul class="navs__wrapper">
+                <li class="navs__item"><a href="{% url 'profile' %}">マイページ</a></li>
+                <li class="navs__item"><a href="#">About</a></li>
+                <li class="navs__item"><a href="#">Services</a></li>
+                <li class="navs__item"><a href="#">Hire us</a></li>
+                <li class="navs__item"><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="black-bg" id="js-black-bg"></div>
+    </div>
+</header>
+
+<script src="{% static "js/header.js" %}"></script>
