@@ -9,9 +9,9 @@
 
 {% block content %}
 <div class="body text-center">
+  {% csrf_token %}
   <form class="form-signin" method="post">
     <h1 class="mb-4 font-weight-normal">Login</h1>
-    {% csrf_token %}
     <label for="username" class="sr-only"> ユーザー名</label>
     {{ form.username }}
     {{ form.password }}
