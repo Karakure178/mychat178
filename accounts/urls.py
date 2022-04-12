@@ -1,6 +1,5 @@
 from django.urls import path
 from .views import SignUpView,SignUpdoneView,Login,HomeView,Logout, TopView,room, room_test,RoomAddView,ChatTestView,UserChangeView
-from accounts import views
 
 urlpatterns = [
     path('signup/', SignUpView.as_view(), name='signup'),
@@ -20,7 +19,7 @@ urlpatterns = [
     path('room_add/', RoomAddView.as_view(), name='room_add'),
 
 ]
-handler500 = views.my_customized_server_error
+
 
 
 
