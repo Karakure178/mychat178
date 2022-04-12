@@ -4,6 +4,7 @@ import dj_database_url
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+SECRET_KEY = 'django-insecure-q^ja&4-zae8-f)+q)hq1hy@+a-89m)xoeuo&c2a@)x3yba9npc'
 
 DEBUG = False
 
@@ -137,6 +138,6 @@ except ImportError:
     pass
 
 if not DEBUG:
-    SECRET_KEY = os.environ['SECRET_KEY']
+    #SECRET_KEY = os.environ['SECRET_KEY']
     import django_heroku
-    django_heroku.settings(locals(), secret_key=False, staticfiles=False)
+    django_heroku.settings(locals(), staticfiles=False)
