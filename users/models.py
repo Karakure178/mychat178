@@ -14,12 +14,12 @@ class User(AbstractUser):
         upload_to = "profile/icon/", 
         default="profile/icon/default.jpg",
     )
-    user_id =  models.CharField(
-        verbose_name="ユーザーID",
-        default= str(ULID()),#str(ULID()),
-        max_length=26,#primary_key=True,
-        # editable=False
-    )
+    # user_id =  models.CharField(
+    #     verbose_name="ユーザーID",
+    #     default= str(ULID()),#str(ULID()),
+    #     max_length=26,#primary_key=True,
+    #     # editable=False
+    # )
     header = models.ImageField(
         verbose_name="プロフィールヘッダー", 
         blank= True, 
