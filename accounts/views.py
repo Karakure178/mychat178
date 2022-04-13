@@ -6,6 +6,7 @@ from django.views import generic
 from . import models
 from . import forms
 
+@csrf_exempt
 class Login(LoginView):
     form_class = forms.LoginForm
     template_name = "registration/login.html"
