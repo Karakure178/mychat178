@@ -150,7 +150,7 @@ class UserChangeView(LoginRequiredMixin, generic.FormView):
 class TestView(generic.FormView):
     template_name = "test.html"
     form_class = forms.TestForm
-    success_url = reverse_lazy('accounts:top')
+    success_url = reverse_lazy('top')
 
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
