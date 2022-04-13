@@ -155,9 +155,9 @@ class TestView(generic.FormView):
     form_class = forms.TestForm
     success_url = reverse_lazy('top')
 
-    @method_decorator(csrf_exempt)
-    def dispatch(self, *args, **kwargs):
-        return super(TestView, self).dispatch(*args, **kwargs)
+    # @method_decorator(csrf_exempt)
+    # def dispatch(self, *args, **kwargs):
+    #     return super(TestView, self).dispatch(*args, **kwargs)
 
 #本番用500errorを詳細に書く
 from django.views.decorators.csrf import requires_csrf_token
