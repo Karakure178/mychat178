@@ -19,15 +19,15 @@ class Login(LoginView):
 class HomeView(LoginRequiredMixin, generic.TemplateView):
     template_name = "registration/profile.html"
     #success_url = reverse_lazy('top')
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["room"] =  models.Room.objects.all().order_by("id")
-        return context
-    def get_success_url(self):
-        # reverse("room",kwargs={'pk': self.object.pk})
-        return reverse("room",kwargs={'pk': self.objects.get(self.object.pk)})
-        #思いついた、pk : self.objects.get(self.object.pk)で行けるのでは？
-        #ここ選択された時valueを与えたいのにわからない。pkじゃなくて
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context["room"] =  models.Room.objects.all().order_by("id")
+    #     return context
+    # def get_success_url(self):
+    #     # reverse("room",kwargs={'pk': self.object.pk})
+    #     return reverse("room",kwargs={'pk': self.objects.get(self.object.pk)})
+    #     #思いついた、pk : self.objects.get(self.object.pk)で行けるのでは？
+    #     #ここ選択された時valueを与えたいのにわからない。pkじゃなくて
 
 
 from django.contrib import messages

@@ -26,15 +26,6 @@
                 <button class="btn_edit" onClick="changeProfileEdit()">プロフィール編集</button>
             </div>
             <h2>{{ user.username }}</h2>
-            <p>ルームの選択</p>
-            <select id="roomList" size=2>
-                {% for i in room %}
-                <option value="{{ i.room }}">{{ i.room }} </option>
-                {% endfor %}
-            </select>
-            <button type="button" id="checkButton" class="btn">
-                OK
-            </button>
             <p><a href="{% url 'logout' %}">Log Out</a></p>
             <p><a href="{% url 'room_add' %}">ルーム新規作成</a></p>
         </div>
