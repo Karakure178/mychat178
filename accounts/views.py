@@ -6,6 +6,7 @@ from django.views import generic
 from . import models
 from . import forms
 
+from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt
 class Login(LoginView):
     form_class = forms.LoginForm
