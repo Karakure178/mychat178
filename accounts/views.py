@@ -18,6 +18,9 @@ class Login(LoginView):
 
 class HomeView(LoginRequiredMixin, generic.TemplateView):
     template_name = "registration/profile.html"
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super(HomeView, self).dispatch(*args, **kwargs)
     #success_url = reverse_lazy('top')
     # def get_context_data(self, **kwargs):
     #     context = super().get_context_data(**kwargs)
