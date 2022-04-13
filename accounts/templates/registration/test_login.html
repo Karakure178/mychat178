@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}MyChat Top{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/top.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="tops text-center">
+    <h1>
+        My Chat(test_login)
+    </h1> 
+    <p>ログインはこちら</p>
+    <a href="{% url 'login' %}">Log In</a>
+</div>
+{% endblock %}

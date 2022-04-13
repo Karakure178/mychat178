@@ -11,13 +11,13 @@ from django.utils.decorators import method_decorator
 class Login(LoginView):
     form_class = forms.LoginForm
     template_name = "registration/login.html"
-    success_url = reverse_lazy('profile')
+    # success_url = reverse_lazy('test_login')
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         return super(Login, self).dispatch(*args, **kwargs)
 
 class HomeView(LoginRequiredMixin, generic.TemplateView):
-    template_name = "registration/profile.html"
+    template_name = "registration/test_login.html"
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         return super(HomeView, self).dispatch(*args, **kwargs)
