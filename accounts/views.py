@@ -151,7 +151,9 @@ class TestView(generic.FormView):
     template_name = "test.html"
     form_class = forms.UserChangeForm
     success_url = reverse_lazy('accounts:top')
-
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super(SignUpView, self).dispatch(*args, **kwargs)
 
 #本番用500errorを詳細に書く
 from django.views.decorators.csrf import requires_csrf_token
