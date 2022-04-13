@@ -7,11 +7,14 @@ from . import models
 from . import forms
 
 from django.views.decorators.csrf import csrf_exempt
-@csrf_exempt
+from django.utils.decorators import method_decorator
 class Login(LoginView):
     form_class = forms.LoginForm
     template_name = "registration/login.html"
     success_url = reverse_lazy('profile')
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super(Login, self).dispatch(*args, **kwargs)
 
 class HomeView(LoginRequiredMixin, generic.TemplateView):
     template_name = "registration/profile.html"
@@ -39,6 +42,11 @@ class RoomAddView(LoginRequiredMixin, generic.FormView):
         form.save_m2m()
         messages.add_message(self.request, messages.SUCCESS, '登録しました！')  # メッセージ出力
         return super().form_valid(form)
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super(RoomAddView, self).dispatch(*args, **kwargs)
+
+
 
 
 def room(request, pk):
@@ -59,11 +67,16 @@ class Logout(LogoutView):
 class TopView(generic.TemplateView):
     template_name = "registration/top.html"
 
+
 class SignUpView(generic.CreateView):
     form_class = forms.SignUpForm
     #form_class = UserCreationForm #カスタムuserを使う場合はエラー
     success_url = reverse_lazy('signup_done')
     template_name = 'registration/signup.html'
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        return super(SignUpView, self).dispatch(*args, **kwargs)
+
 
 class SignUpdoneView(generic.TemplateView):
     template_name = "registration/signup_done.html"
@@ -133,6 +146,7 @@ class UserChangeView(LoginRequiredMixin, generic.FormView):
         return kwargs
 
 
+#本番用500errorを詳細に書く
 from django.views.decorators.csrf import requires_csrf_token
 from django.http import HttpResponseServerError
 @requires_csrf_token
