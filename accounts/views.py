@@ -11,7 +11,7 @@ from django.utils.decorators import method_decorator
 class Login(LoginView):
     form_class = forms.LoginForm
     template_name = "registration/login.html"
-    # success_url = reverse_lazy('test_login')
+    success_url = reverse_lazy('test_login')
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         return super(Login, self).dispatch(*args, **kwargs)
