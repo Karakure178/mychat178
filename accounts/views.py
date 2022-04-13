@@ -154,7 +154,8 @@ class TestView(generic.FormView):
     template_name = "test.html"
     form_class = forms.TestForm
     success_url = reverse_lazy('top')
-
+    def form_valid(self, form):
+        return super().form_valid(form)
     # @method_decorator(csrf_exempt)
     # def dispatch(self, *args, **kwargs):
     #     return super(TestView, self).dispatch(*args, **kwargs)
