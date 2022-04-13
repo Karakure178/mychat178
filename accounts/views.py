@@ -146,6 +146,13 @@ class UserChangeView(LoginRequiredMixin, generic.FormView):
         return kwargs
 
 
+#test
+class TestView(generic.FormView):
+    template_name = "test.html"
+    form_class = forms.UserChangeForm
+    success_url = reverse_lazy('accounts:top')
+
+
 #本番用500errorを詳細に書く
 from django.views.decorators.csrf import requires_csrf_token
 from django.http import HttpResponseServerError

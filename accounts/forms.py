@@ -2,7 +2,7 @@ from pyexpat import model
 from django.contrib.auth import forms as auth_forms
 from pyrsistent import field
 from users.models import User
-from accounts.models import Room,Chat
+from accounts.models import Room,Chat,Tag
 from django import forms
 
 
@@ -72,3 +72,9 @@ class UserChangeForm(forms.ModelForm):
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
         user.save()
+
+
+class TestForm(forms.ModelForm):
+    class Meta:
+        model = Tag
+        fields = '__all__'

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import SignUpView,SignUpdoneView,Login,HomeView,Logout, TopView,room, room_test,RoomAddView,ChatTestView,UserChangeView
+from .views import SignUpView,SignUpdoneView,Login,HomeView,Logout, TopView,room, room_test,RoomAddView,ChatTestView,UserChangeView,TestView
 
 urlpatterns = [
     path('signup/', SignUpView.as_view(), name='signup'),
@@ -18,18 +18,5 @@ urlpatterns = [
     path( 'test', ChatTestView.as_view(), name='chat_test' ),
     path('room_add/', RoomAddView.as_view(), name='room_add'),
 
+    path("c_test",TestView.as_view(),name="test"),
 ]
-
-
-
-
-
-#from django.urls import path
-#from .views import HomeView, TestView,UserChangeView
-#from . import views
-
-#urlpatterns = [
-    #path( '', views.chat, name='chat' ),
-    #path( 'test', views.chat_test, name='chat_test' ),
-    #path('home/', HomeView.as_view(), name='home'),
-#]
