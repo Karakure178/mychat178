@@ -9,6 +9,9 @@ SECRET_KEY = 'django-insecure-q^ja&4-zae8-f)+q)hq1hy@+a-89m)xoeuo&c2a@)x3yba9npc
 DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
+CORS_ORIGIN_WHITELIST = [
+    'https://example.com'  # 本番環境用
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
