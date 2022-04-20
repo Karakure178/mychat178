@@ -17,7 +17,7 @@ class Login(LoginView):
         return super(Login, self).dispatch(*args, **kwargs)
 
 class HomeView(LoginRequiredMixin, generic.TemplateView):
-    template_name = "registration/test_login.html"
+    template_name = "registration/profile.html"
     @method_decorator(csrf_exempt)
     def dispatch(self, *args, **kwargs):
         return super(HomeView, self).dispatch(*args, **kwargs)
@@ -125,7 +125,7 @@ class ChatTestView(LoginRequiredMixin, generic.TemplateView):
         chats = [[] for i in range(len(room_data))]
         for i in chat_data:
             room_index = room_data.index(i.room)#ただのlistに変換
-            chats[room_index].append([i.name,i.text,i.time.strftime('%Y/%m/%d %H:%M:%S'),])
+            chats[room_index].append([i.name,i.text,i.time.strftime('%Y/%m/%d %H:%M:%S'),i.icon.icon.url,])
         return chats
 
 class UserChangeView(LoginRequiredMixin, generic.FormView):

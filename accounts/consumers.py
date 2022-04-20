@@ -6,6 +6,7 @@ import datetime
 from accounts.models import Chat
 from users.models import User
 from channels.db import database_sync_to_async
+from asgiref.sync import sync_to_async
 
 # ChatConsumerクラス: WebSocketからの受け取ったものを処理するクラス
 class ChatConsumer( AsyncWebsocketConsumer ):
@@ -61,30 +62,29 @@ class ChatConsumer( AsyncWebsocketConsumer ):
                 'username': self.strUserName, # ユーザー名
                 "roomname": self.strRoomName,#追加
                 'datetime': datetime.datetime.now().strftime( '%Y/%m/%d %H:%M:%S' ), # 現在時刻
+                "icon": await self._icon_send(self.strUserName),
             }
+
+            #メッセージの送信＆DB保存
             await self.channel_layer.group_send( self.strGroupName, data )
             await self._save_message(self.strUserName,self.strRoomName,strMessage)        
-
-
 
     # 拡散メッセージ受信時の処理
     # （self.channel_layer.group_send()の結果、グループ内の全コンシューマーにメッセージ拡散され、各コンシューマーは本関数で受信処理します）
     async def chat_message( self, data ):
-        strMessage = data['message']
         data_json = {
             'message': data['message'],
             'username': data['username'],
             'datetime': data['datetime'],
             'roomname': data['roomname'],
+            'icon': data['icon'],
         }
-
         # WebSocketにメッセージを送信します。
         # （送信されたメッセージは、ブラウザ側のJavaScript関数のsocketChat.onmessage()で受信処理されます）
         # JSONデータをテキストデータにエンコードして送ります。
-        
         await self.send( text_data=json.dumps( data_json ) )
 
-# チャットへの参加
+    # チャットへの参加
     async def join_chat( self, strRoomName ):
         # グループに参加
         #self.strGroupName = 'chat_%s' % strRoomName
@@ -104,14 +104,20 @@ class ChatConsumer( AsyncWebsocketConsumer ):
         # ルーム名を空に
         self.strGroupName = ''
 
+    #chatのDBに保存
     @database_sync_to_async
     def _save_message(self, your_user, room_name, strMessage):
-        #Chat.objects.create(name="kai",room="ゲーム",text="hallo" )
-        Chat.objects.create(name=your_user,room=decode_roomname(room_name),text=strMessage, )
+        icon_url = User.objects.filter(username__iexact=your_user)
+        Chat.objects.create(name=your_user,room=decode_roomname(room_name),text=strMessage, icon=icon_url[0])
 
-    
+    #icon.urlをmessagejsonに返す
+    @database_sync_to_async
+    def _icon_send(self,user_name):
+        user_k = User.objects.filter(username__iexact=user_name)
+        return user_k[0].icon.url
+
+#送られるルーム名がASCIIなため元に戻す関数
 def decode_roomname(room_name):
-    #送られるルーム名がASCIIなため元に戻す関数
     # print(room_name)
     decode = room_name.split('.')
     roomDecode = ""
@@ -119,10 +125,3 @@ def decode_roomname(room_name):
         roomDecode = roomDecode + chr(int(i))
     #chr(int)でascii文字列に変換
     return roomDecode
-
-def icon_send(user_name):
-    user_k = User.objects.filter(username__iexact=user_name)
-    return user_k
-
-#Chat.objects.get(id=1).icon.icon
-#これでformに値を代入する

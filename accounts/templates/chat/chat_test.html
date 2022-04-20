@@ -149,12 +149,16 @@
         }
         //現在のルームDBを表示する
         let room_chat = {{ room_chats|safe }};
-        //console.log(29393);
         for(let i = 0; i<room_chat[room_index].length; i++){
             let elementLi = document.createElement("li");
             elementLi.class = "message_child";
             elementLi.textContent = room_chat[room_index][i][2] + " - [" + room_chat[room_index][i][0] + "] " + room_chat[room_index][i][1];
             g_elementListMessage.append(elementLi);    // リストの一番下に追加
+
+            //DBの画像追加
+            let elementIcon = document.createElement("img");
+            elementIcon.src = room_chat[room_index][i][3];
+            g_elementListMessage.append(elementIcon);
         }
     }
 
@@ -201,9 +205,8 @@
         console.log(g_elementTextRoomName.value+"::"+ data["roomname"]);
 
 
-
         // メッセージの整形
-        let strMessage = data["datetime"] + " - [" + data["username"] + "] " + data["message"] + "[ルーム名:" + asciiDecode(data["roomname"]) + "]";
+        let strMessage = data["datetime"] + " - [" + data["username"] + "] " + data["message"] + "[ルーム名:" + asciiDecode(data["roomname"]) +"]";
 
         // 拡散されたメッセージをメッセージリストに追加
         let elementLi = document.createElement("li");
@@ -212,6 +215,11 @@
 
         //g_elementListMessage.prepend(elementLi); // リストの一番上に追加
         g_elementListMessage.append(elementLi);    // リストの一番下に追加
+
+        //icon表示
+        let elementIcon = document.createElement("img");
+        elementIcon.src = data["icon"];
+        g_elementListMessage.append(elementIcon);
     };
 
     // WebSocketクローズ時の処理
