@@ -10,7 +10,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 CORS_ORIGIN_WHITELIST = [
-    'https://example.com'  # 本番環境用
+    'https://mychat178.herokuapp.com'  # 本番環境用
 ]
 
 INSTALLED_APPS = [
