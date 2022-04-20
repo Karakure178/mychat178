@@ -12,6 +12,7 @@ ALLOWED_HOSTS = ["*"]
 # CORS_ORIGIN_WHITELIST = [
 #     'https://mychat178.herokuapp.com'  # 本番環境用
 # ]
+CSRF_TRUSTED_ORIGINS = ['https://mychat178.herokuapp.com']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
