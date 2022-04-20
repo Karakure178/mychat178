@@ -54,6 +54,7 @@ class UserChangeForm(forms.ModelForm):
             'email',
             'last_name',
             'first_name',
+            "icon",
         ]
 
     def __init__(self, email=None, first_name=None, last_name=None, *args, **kwargs):
@@ -71,6 +72,7 @@ class UserChangeForm(forms.ModelForm):
         user.email = self.cleaned_data['email']
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
+        user.icon = self.changed_data["icon"]
         user.save()
 
 

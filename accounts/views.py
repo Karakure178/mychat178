@@ -145,6 +145,7 @@ class UserChangeView(LoginRequiredMixin, generic.FormView):
             'email' : self.request.user.email,
             'first_name' : self.request.user.first_name,
             'last_name' : self.request.user.last_name,
+            "icon" : self.request.user.icon,
         })
         return kwargs
 
