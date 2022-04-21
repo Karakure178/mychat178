@@ -22,15 +22,6 @@ class HomeView(LoginRequiredMixin, generic.TemplateView):
     def dispatch(self, *args, **kwargs):
         return super(HomeView, self).dispatch(*args, **kwargs)
     #success_url = reverse_lazy('top')
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context["room"] =  models.Room.objects.all().order_by("id")
-    #     return context
-    # def get_success_url(self):
-    #     # reverse("room",kwargs={'pk': self.object.pk})
-    #     return reverse("room",kwargs={'pk': self.objects.get(self.object.pk)})
-    #     #思いついた、pk : self.objects.get(self.object.pk)で行けるのでは？
-    #     #ここ選択された時valueを与えたいのにわからない。pkじゃなくて
 
 
 from django.contrib import messages
@@ -49,20 +40,6 @@ class RoomAddView(LoginRequiredMixin, generic.FormView):
     def dispatch(self, *args, **kwargs):
         return super(RoomAddView, self).dispatch(*args, **kwargs)
 
-
-
-
-def room(request, pk):
-    return render(request, 'registration/room.html', {
-        'room': pk
-    })
-
-#room_test.htmlテスト
-def room_test(request, pk):
-    room_names = models.Room.objects.all().order_by('id')
-    return render(request, 'registration/room_test.html', {
-        'room': pk,"room_names":room_names
-    })
 
 class Logout(LogoutView):
     template_name = "registration/logout.html"
@@ -131,7 +108,8 @@ class ChatTestView(LoginRequiredMixin, generic.TemplateView):
 class UserChangeView(LoginRequiredMixin, generic.FormView):
     template_name = 'registration/profile_edit.html'
     form_class = forms.UserChangeForm
-    success_url = reverse_lazy('accounts:profile')
+    success_url = reverse_lazy('profile')
+    #success_url = reverse_lazy('accounts:profile')だとエラー...なんで?
     
     def form_valid(self, form):
         #formのupdateメソッドにログインユーザーを渡して更新
@@ -145,7 +123,7 @@ class UserChangeView(LoginRequiredMixin, generic.FormView):
             'email' : self.request.user.email,
             'first_name' : self.request.user.first_name,
             'last_name' : self.request.user.last_name,
-            "icon" : self.request.user.icon,
+            'header' : self.request.user.header,
         })
         return kwargs
 
@@ -157,9 +135,6 @@ class TestView(generic.FormView):
     success_url = reverse_lazy('top')
     def form_valid(self, form):
         return super().form_valid(form)
-    # @method_decorator(csrf_exempt)
-    # def dispatch(self, *args, **kwargs):
-    #     return super(TestView, self).dispatch(*args, **kwargs)
 
 #本番用500errorを詳細に書く
 from django.views.decorators.csrf import requires_csrf_token

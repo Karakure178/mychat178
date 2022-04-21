@@ -9,11 +9,16 @@
         <div class="ui segment">
             <div class="content">
                 <div class="header"><h3>ユーザー情報の変更</h3></div>
-                <form class="ui form" action="" method="POST">
+                <form class="ui form" action="" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{form.as_p}}
                     <button class="ui orange button" type="submit">確認</button>
                 </form>
+                <tr>
+                    <td>{{ user.icon.description }}</td>
+                    <td><img src="{{ user.icon.url }}" width="100" height="100"/></td>
+                    <td>{{ user.icon.uploaded_at }}</td>
+                <tr>
             </div>
         </div>
         <a href="{% url 'profile' %}">プロフィールに戻る</a>

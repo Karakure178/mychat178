@@ -5,7 +5,6 @@ from users.models import User
 from accounts.models import Room,Chat,Tag
 from django import forms
 
-
 class LoginForm(auth_forms.AuthenticationForm):
     def __init__(self, *args, **kw):
         super().__init__(*args, **kw)
@@ -54,10 +53,11 @@ class UserChangeForm(forms.ModelForm):
             'email',
             'last_name',
             'first_name',
+            "header",
             "icon",
         ]
 
-    def __init__(self, email=None, first_name=None, last_name=None, *args, **kwargs):
+    def __init__(self, email=None, first_name=None, last_name=None, header=None, *args, **kwargs):
         kwargs.setdefault('label_suffix', '')
         super().__init__(*args, **kwargs)
         # ユーザーの更新前情報をフォームに挿入
@@ -67,12 +67,15 @@ class UserChangeForm(forms.ModelForm):
             self.fields['first_name'].widget.attrs['value'] = first_name
         if last_name:
             self.fields['last_name'].widget.attrs['value'] = last_name
+        if header:
+            self.fields['header'].widget.attrs['value'] = header
 
     def update(self, user):
         user.email = self.cleaned_data['email']
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
-        user.icon = self.changed_data["icon"]
+        user.header = self.cleaned_data['header']
+        user.icon = self.cleaned_data['icon']
         user.save()
 
 
