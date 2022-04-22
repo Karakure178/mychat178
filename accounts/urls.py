@@ -20,4 +20,4 @@ urlpatterns = [
 ]
 
 router = routers.DefaultRouter()
-router.register(r'chats', ChatViewSet)
+router.register('chats', ChatViewSet)

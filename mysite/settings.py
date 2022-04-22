@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     "channels",
     'django_cleanup.apps.CleanupConfig',# django-cleanup
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
