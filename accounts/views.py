@@ -1,13 +1,14 @@
-from django.shortcuts import render
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy,reverse
+from django.urls import reverse_lazy
 from django.views import generic
 from . import models
 from . import forms
-
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+
+
+
 class Login(LoginView):
     form_class = forms.LoginForm
     template_name = "registration/login.html"
@@ -146,3 +147,14 @@ def my_customized_server_error(request, template_name='500.html'):
     from django.views import debug
     error_html = debug.technical_500_response(request, *sys.exc_info()).content
     return HttpResponseServerError(error_html)
+
+
+
+import django_filters
+from rest_framework import viewsets, filters
+from .models import Chat
+from .serializer import ChatSerializer
+
+class ChatViewSet(viewsets.ModelViewSet):
+    queryset = Chat.objects.all()
+    serializer_class = ChatSerializer
