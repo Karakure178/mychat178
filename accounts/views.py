@@ -93,16 +93,17 @@ class ChatTestView(LoginRequiredMixin, generic.TemplateView):
         rooms = list()
         for i in data:
             if i.room not in rooms:
-                print(i.room)
                 rooms.append(i.room)
+        #print("room_data[0]:"+rooms[0])
         return rooms
 
-    #ユーザーが所属するルームののchatlist(ユーザ名,ルーム名,チャット内容)を返却
+    #ユーザーが所属するルームのchatlist(ユーザ名,ルーム名,チャット内容)を返却
     def _rooms_chat_get(self,room_data,chat_data):
         chats = [[] for i in range(len(room_data))]
         for i in chat_data:
-            room_index = room_data.index(i.room)#ただのlistに変換
-            chats[room_index].append([i.name,i.text,i.time.strftime('%Y/%m/%d %H:%M:%S'),i.icon.icon.url,])
+            if i.room in room_data:
+                room_index = room_data.index(i.room)#ただのlistに変換
+                chats[room_index].append([i.name,i.text,i.time.strftime('%Y/%m/%d %H:%M:%S'),i.icon.icon.url,])
         return chats
 
 class UserChangeView(LoginRequiredMixin, generic.FormView):

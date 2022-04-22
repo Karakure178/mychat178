@@ -54,7 +54,7 @@
     </div>
     <div class="article">
         <div class="chat_list">
-            <div id="text_username"> "{{ user.username }}"</div>
+            <div id="text_username"></div>
             <ul id="list_message"></ul>
         </div>
 
@@ -65,9 +65,7 @@
                 <input type="submit" value="送信" />
             </form>
         </div>
-
     </div>
-
 </div>
 
 <script>
@@ -122,7 +120,6 @@
 
         // ルーム名,全部ASIIに変換
         let strInputRoomName = asciiAt(area.value);
-        //asciiAt(g_elementInputRoomName.value);
 
         //ルーム名をliに入れる
         g_elementTextRoomName.value = strInputRoomName;
@@ -133,7 +130,6 @@
         g_socket.send(JSON.stringify({ "data_type": "join", "username": strInputUserName, "roomname": strInputRoomName }));
 
         //ルーム切り替え時に存在するチャットログを全て削除する
-        //console.log("mohemohe");
         while(g_elementListMessage.lastChild){
             g_elementListMessage.removeChild(g_elementListMessage.lastChild);
         }
@@ -150,15 +146,40 @@
         //現在のルームDBを表示する
         let room_chat = {{ room_chats|safe }};
         for(let i = 0; i<room_chat[room_index].length; i++){
+            /*補足
+            room_chat[room_index][i][0] = chat.name
+            room_chat[room_index][i][1] = chat.text
+            room_chat[room_index][i][2] = chat.time
+            */
             let elementLi = document.createElement("li");
-            elementLi.class = "message_child";
-            elementLi.textContent = room_chat[room_index][i][2] + " - [" + room_chat[room_index][i][0] + "] " + room_chat[room_index][i][1];
-            g_elementListMessage.append(elementLi);    // リストの一番下に追加
 
-            //DBの画像追加
+            //自分のコメントはtalk_left,それ以外はtalk_rightにクラスを変える
+            if(strInputUserName == room_chat[room_index][i][0]){
+                elementLi.classList.add('talk_left');
+            }else{
+                elementLi.classList.add("talk_right");
+            }
+            
+            //DBのiconをdivに追加
+            let faceIconDiv = document.createElement("div");
+            faceIconDiv.classList.add('faceicon');
             let elementIcon = document.createElement("img");
             elementIcon.src = room_chat[room_index][i][3];
-            g_elementListMessage.append(elementIcon);
+            faceIconDiv.append(elementIcon);
+            elementLi.append(faceIconDiv);
+
+            let SaysDiv = document.createElement("div");
+            SaysDiv.classList.add('says');
+            let childP = document.createElement("p");
+            childP.textContent = room_chat[room_index][i][0] + "] " + room_chat[room_index][i][1];
+            SaysDiv.append(childP);
+            elementLi.append(SaysDiv);
+
+            g_elementListMessage.append(elementLi);    // リストの一番下に追加
+            
+            let timeP = document.createElement("p");
+            timeP.textContent =  room_chat[room_index][i][2];
+            g_elementListMessage.append(timeP);
         }
     }
 
@@ -194,6 +215,7 @@
 
     // WebSocketからメッセージ受信時の処理
     g_socket.onmessage = (event) => {
+        let strInputUserName = "{{ user.username }}";
         // テキストデータをJSONデータにデコード
         let data = JSON.parse(event.data);
 
@@ -204,22 +226,37 @@
         }
         console.log(g_elementTextRoomName.value+"::"+ data["roomname"]);
 
-
         // メッセージの整形
         let strMessage = data["datetime"] + " - [" + data["username"] + "] " + data["message"] + "[ルーム名:" + asciiDecode(data["roomname"]) +"]";
 
-        // 拡散されたメッセージをメッセージリストに追加
+        //コメント集団li追加
         let elementLi = document.createElement("li");
-        // elementLi.class = "message_child";
-        elementLi.textContent = strMessage;
 
-        //g_elementListMessage.prepend(elementLi); // リストの一番上に追加
-        g_elementListMessage.append(elementLi);    // リストの一番下に追加
-
-        //icon表示
+        //自分のコメントはtalk_left,それ以外はtalk_rightにクラスを変える
+        if(strInputUserName ==  data["username"]){
+            elementLi.classList.add('talk_left');
+        }else{
+            elementLi.classList.add("talk_right");
+        }
+        
+        //DBのiconをdivに追加
+        let faceIconDiv = document.createElement("div");
+        faceIconDiv.classList.add('faceicon');
         let elementIcon = document.createElement("img");
         elementIcon.src = data["icon"];
-        g_elementListMessage.append(elementIcon);
+        faceIconDiv.append(elementIcon);
+        elementLi.append(faceIconDiv);
+
+        //liにpクラスを追加
+        let SaysDiv = document.createElement("div");
+        SaysDiv.classList.add('says');
+        let childP = document.createElement("p");
+        childP.textContent = strMessage;
+        SaysDiv.append(childP);
+        elementLi.append(SaysDiv);
+
+        //Li追加
+        g_elementListMessage.append(elementLi);
     };
 
     // WebSocketクローズ時の処理

@@ -88,13 +88,101 @@ li {
 }
 /* チャット内容見た目ここまで */
 
+/*ルーム内吹き出し*/
+.talk_left,
+.talk_right {
+    margin: 30px 0;
+    display: flex;
+    /* 二つの意味がわからない */
+    justify-content: flex-start;
 
-/* メッセージtextarea */
-#input_message{
-    width: 90%;
-    margin-left: 1%;
+    /* align-items: flex-start; */
+    /*縦位置を上揃え*/
+
+    align-items: center;
+    /*縦位置を真ん中揃え*/
 }
-/* メッセージtextareaここまで */
+
+.talk_right {
+    justify-content: flex-end;
+    /* これ外すと左に寄る。 */
+}
+
+/* プロフィールのアイコン */
+.faceicon img {
+    width: 60px;
+    height: auto;
+    max-width: 60px;
+    background: #fff;
+    border: none;
+    border-radius: 50%;
+    box-shadow: none;
+}
+
+/* アイコンと吹き出しのスペースあける */
+.talk_right .faceicon {
+    margin-left: 25px;
+    margin-right: 10px;
+}
+
+.talk_left .faceicon {
+    margin-right: 25px;
+    margin-left: 10px;
+}
+
+/* 画像を吹き出しより右側に動かす */
+.talk_right .faceicon {
+    order: 2 !important;
+}
+
+.says {
+    max-width: 500px;
+    /*最大幅は任意*/
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+    padding: 17px 13px 15px 18px;
+    border-radius: 12px;
+    background: #99dddd;
+    /*色は任意*/
+    box-sizing: border-box;
+    margin: 0 !important;
+    line-height: 1.5;
+    /*   align-items: center; */
+}
+
+.says p {
+    margin: 8px 0 0 !important;
+}
+
+.says p:first-child {
+    margin-top: 0 !important;
+}
+
+/* 吹き出しの三角と吹き出しの位置調整 */
+.says:after {
+    content: "";
+    position: absolute;
+    border: 10px solid transparent;
+    /* margin-top:-3px;  */
+}
+
+/* それぞれ左右の吹き出し三角調整 */
+.talk_left .says:after {
+    left: -26px;
+    border-right: 22px solid #99dddd;
+}
+
+.talk_right .says:after {
+    right: -26px;
+    border-left: 22px solid #99dddd;
+}
+
+.talk_right p{
+    justify-content: flex-end;
+
+}
+
 
 /* submit見た目 */
 form input{
