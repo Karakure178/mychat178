@@ -4,6 +4,7 @@ async-timeout==4.0.2
 attrs==21.4.0
 autobahn==22.3.2
 Automat==20.2.0
+certifi==2020.6.20
 cffi==1.15.0
 channels==3.0.4
 channels-redis==3.4.0
@@ -13,7 +14,9 @@ daphne==3.0.2
 dj-database-url==0.5.0
 Django==4.0.4
 django-cleanup==6.0.0
+django-filter==21.1
 django-heroku==0.3.1
+djangorestframework==3.13.1
 hiredis==2.0.0
 hyperlink==21.0.0
 idna==3.3
@@ -27,6 +30,7 @@ pycparser==2.21
 pyOpenSSL==22.0.0
 pyrsistent==0.18.1
 python-ulid==1.1.0
+pytz==2022.1
 service-identity==21.1.0
 six==1.16.0
 sqlparse==0.4.2
