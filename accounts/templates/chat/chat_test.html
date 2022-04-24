@@ -61,16 +61,18 @@
         <div class="message_input">
             <form action="" onsubmit="onsubmitButton_Send(); return false;">
                 <!-- Message : <input type="text" id="input_message" autocomplete="off" autofocus /> -->
-                <textarea  id="input_message" rows="4" cols="40">感想を記入します。</textarea>
+                <textarea id="input_message" rows="4" cols="40">感想を記入します。</textarea>
                 <input type="submit" value="送信" />
             </form>
         </div>
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"
+    integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous">
+</script>
+
 <script>
-    //const g_elementDivJoinScreen = document.getElementById("div_join_screen");
-    //const g_elementDivChatScreen = document.getElementById("div_chat_screen");
     const g_elementInputUserName = document.getElementById("input_username");
     const g_elementInputRoomName = document.getElementById("input_roomname");
 
@@ -111,6 +113,7 @@
         return roomDecode;
     }
 
+    //chatルームに参加したら実行
     function onsubmitButton_JoinChat(area) {
         let strInputUserName = "{{ user.username }}";
         if (!strInputUserName) {
@@ -124,28 +127,102 @@
         //ルーム名をliに入れる
         g_elementTextRoomName.value = strInputRoomName;
         g_elementTextRoomName.textContent = area.value;
-        //g_elementInputRoomName.value;//ルーム名入れる
 
         // サーバーに"join"を送信
-        g_socket.send(JSON.stringify({ "data_type": "join", "username": strInputUserName, "roomname": strInputRoomName }));
+        g_socket.send(JSON.stringify({
+            "data_type": "join",
+            "username": strInputUserName,
+            "roomname": strInputRoomName
+        }));
 
         //ルーム切り替え時に存在するチャットログを全て削除する
-        while(g_elementListMessage.lastChild){
+        while (g_elementListMessage.lastChild) {
             g_elementListMessage.removeChild(g_elementListMessage.lastChild);
         }
-        
+
         //以下にルームのDB記述を追加
-        //現在のroomindexを取り出す
-        let et_room = {{ rooms|safe }};
-        let room_index;
-        for(let i = 0;i<et_room.length;i++){
-            if(area.value == et_room[i]){
-                room_index = i;
+        ajax_get(area.value, "{{ user.id }}", strInputUserName);
+
+    }
+
+    //もしラジオボタンが変化したらルームを変更する。
+    let radio_btns = document.querySelectorAll(`input[type='radio']`);
+    // console.log(radio_btns[0].value);
+    for (let target of radio_btns) {
+        target.addEventListener(`change`, function () {
+            console.log(target.value);
+            onsubmitButton_JoinChat(target);
+        });
+    }
+
+    //room_name=所属するルーム,user_id=現在のユーザid,strInputUserName=現在のユーザ名
+    function ajax_get(room_name, user_id, strInputUserName) {
+        let room_data; //ajax_room_data
+
+        $.ajax({
+            url: "http://127.0.0.1:8000/accounts/api_room/" + user_id,
+            type: 'get',
+            dataType: 'json',
+            timeout: 10000,
+        }).done(function (data) {
+            room_data = data;
+        })
+
+        $.ajax({
+            url: "http://127.0.0.1:8000/accounts/api_chat/",
+            type: 'get',
+            dataType: 'json',
+            timeout: 10000,
+        }).done(function (data) {
+            //console.log(room_data.length);
+            let rooms_list = rooms_get(room_data);
+            let room_index;
+            for (let i = 0; i < rooms_list.length; i++) {
+                if (room_name == rooms_list[i]) {
+                    room_index = i;
+                }
+            }
+
+            //タグ追加
+            rooms_add(rooms_chat_get(rooms_list, data), room_index, strInputUserName);
+        })
+    }
+
+
+    //user.idからroom.filterで所属ルームを回収・rooms_get()でリスト化、rooms_chat_getでチャット内容を取得と。
+    function rooms_get(data) {
+        rooms = [];
+        for (let i = 0; i < data.length; i++) {
+            if (rooms.includes(data[i].room) == false) {
+                rooms.push(data[i].room);
             }
         }
-        //現在のルームDBを表示する
-        let room_chat = {{ room_chats|safe }};
-        for(let i = 0; i<room_chat[room_index].length; i++){
+        console.log("room_data:" + rooms.length);
+        return rooms;
+    }
+
+    //ユーザーが所属するルームのchatlist(ユーザ名,ルーム名,チャット内容)を返却
+    function rooms_chat_get(room_data, chat_data) {
+        let chats = Array(room_data.length).fill().map((_, i) => []);
+        for (let i = 0; i < chat_data.length; i++) {
+            if (room_data.includes(chat_data[i].room)) {
+                //console.log(chat_data[i].room + ":" + chat_data[i].name);
+                let room_index = room_data.indexOf(chat_data[i].room);
+                //console.log(":room_index:" + room_index);
+                chats[room_index].push([chat_data[i].name, chat_data[i].text, chat_data[i].time, chat_data[i].icon
+                    .icon,
+                ]);
+                //console.log(chat_data[i].icon.icon);
+            }
+        }
+        //console.log(chats);
+        return chats;
+    }
+
+    //ajaxで受け取ったDBをタグ追加して表示
+    //chat内容、room_index=所属するルームの要素,strInputUserName=現在のユーザ名
+    function rooms_add(room_chat, room_index, strInputUserName) {
+        for (let i = 0; i < room_chat[room_index].length; i++) {
             /*補足
             room_chat[room_index][i][0] = chat.name
             room_chat[room_index][i][1] = chat.text
@@ -154,12 +231,12 @@
             let elementLi = document.createElement("li");
 
             //自分のコメントはtalk_left,それ以外はtalk_rightにクラスを変える
-            if(strInputUserName == room_chat[room_index][i][0]){
+            if (strInputUserName == room_chat[room_index][i][0]) {
                 elementLi.classList.add('talk_left');
-            }else{
+            } else {
                 elementLi.classList.add("talk_right");
             }
-            
+
             //DBのiconをdivに追加
             let faceIconDiv = document.createElement("div");
             faceIconDiv.classList.add('faceicon');
@@ -175,28 +252,14 @@
             SaysDiv.append(childP);
             elementLi.append(SaysDiv);
 
-            g_elementListMessage.append(elementLi);    // リストの一番下に追加
-            
+            g_elementListMessage.append(elementLi); // リストの一番下に追加
+
             let timeP = document.createElement("p");
-            timeP.textContent =  room_chat[room_index][i][2];
+            timeP.textContent = room_chat[room_index][i][2];
             g_elementListMessage.append(timeP);
         }
     }
 
-    //ボタンが押されている方にヘッダーを変える
-    let radio_btns = document.querySelectorAll(`input[type='radio']`);
-    // console.log(radio_btns[0].value);
-
-
-    //もしラジオボタンが変化したらルームを変更する。
-    //ついでにDBも読み込む
-    for (let target of radio_btns) {
-        target.addEventListener(`change`, function () {
-            console.log(target.value);
-            onsubmitButton_JoinChat(target);
-        });
-        //onsubmitButton_JoinChat(target)
-    }
 
     // 「Send」ボタンを押したときの処理
     function onsubmitButton_Send() {
@@ -207,7 +270,9 @@
         }
 
         // WebSocketを通したメッセージの送信
-        g_socket.send(JSON.stringify({ "message": strMessage }));
+        g_socket.send(JSON.stringify({
+            "message": strMessage
+        }));
 
         // 送信用テキストHTML要素の中身のクリア
         g_elementInputMessage.value = "";
@@ -224,21 +289,22 @@
             console.log("はいってませーん");
             return;
         }
-        console.log(g_elementTextRoomName.value+"::"+ data["roomname"]);
+        console.log(g_elementTextRoomName.value + "::" + data["roomname"]);
 
         // メッセージの整形
-        let strMessage = data["datetime"] + " - [" + data["username"] + "] " + data["message"] + "[ルーム名:" + asciiDecode(data["roomname"]) +"]";
+        let strMessage = data["datetime"] + " - [" + data["username"] + "] " + data["message"] + "[ルーム名:" +
+            asciiDecode(data["roomname"]) + "]";
 
         //コメント集団li追加
         let elementLi = document.createElement("li");
 
         //自分のコメントはtalk_left,それ以外はtalk_rightにクラスを変える
-        if(strInputUserName ==  data["username"]){
+        if (strInputUserName == data["username"]) {
             elementLi.classList.add('talk_left');
-        }else{
+        } else {
             elementLi.classList.add("talk_right");
         }
-        
+
         //DBのiconをdivに追加
         let faceIconDiv = document.createElement("div");
         faceIconDiv.classList.add('faceicon');
@@ -265,8 +331,6 @@
         console.error("Unexpected : Chat socket closed.");
     };
 
-    //https://stackoverflow.com/questions/23051416/uncaught-invalidstateerror-failed-to-execute-send-on-websocket-still-in-co
-    //https://otiai10.hatenablog.com/entry/2013/06/21/191615
     //ソケット準備完了後発火している。
     g_socket.onopen = function (ev) {
         console.log('On Open Event =>', ev);

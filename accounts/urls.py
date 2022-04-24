@@ -1,7 +1,6 @@
 from django.urls import path
-from .views import SignUpView,SignUpdoneView,Login,HomeView,Logout, TopView,RoomAddView,ChatTestView,UserChangeView,TestView
-from rest_framework import routers
-from .views import ChatViewSet
+from .views import SignUpView,SignUpdoneView,Login,HomeView,Logout, TopView,RoomAddView,ChatTestView,UserChangeView,TestView,GreetView
+from .views import ChatViewSet,RoomViewSet
 urlpatterns = [
     path('signup/', SignUpView.as_view(), name='signup'),
     path('signup_done/', SignUpdoneView.as_view(), name='signup_done'),
@@ -17,7 +16,10 @@ urlpatterns = [
     path('room_add/', RoomAddView.as_view(), name='room_add'),
 
     path("c_test",TestView.as_view(),name="test"),
-]
 
-router = routers.DefaultRouter()
-router.register('chats', ChatViewSet)
+    path('api_chat/', ChatViewSet.as_view(), name='detail'),
+    path('api_chat/<str:room>/', ChatViewSet.as_view(), name='detail'),
+    path('api_room/<int:meta>/', RoomViewSet.as_view(), name='detail'),
+
+    path('ajax_test/', GreetView.as_view(), name='ajax_test'),
+]

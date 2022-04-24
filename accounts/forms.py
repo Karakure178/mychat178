@@ -83,3 +83,8 @@ class TestForm(forms.ModelForm):
     class Meta:
         model = Tag
         fields = '__all__'
+
+
+#ajax_test
+class GreetForm(forms.Form):
+    name = forms.CharField(label='あなたの名前は？')

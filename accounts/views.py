@@ -8,7 +8,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
 
-
 class Login(LoginView):
     form_class = forms.LoginForm
     template_name = "registration/login.html"
@@ -74,38 +73,9 @@ class ChatTestView(LoginRequiredMixin, generic.TemplateView):
         data = models.Room.objects.filter(meta__in=who)
         
         #アクセスしてるusernameでchatを検索しヒットしたオブジェクトをdata_chatsに突っ込む
-        #request_username = models.User.objects.get(id=self.request.user.id)
-        request_chats = models.Chat.objects.all()#models.Chat.objects.filter(name=request_username)
         context["room_names"] =  data
 
-        #data_chatsをそれぞれのルームへ分割arrayしたい、今持ってるルーム数知りたい
-        room_data = self._rooms_get(data)
-        rooms_chats =  self._rooms_chat_get(room_data,request_chats)
-        """
-        rooms_chat[ルーム数][ [ユーザ名],[text],[時間],[アイコン] ]
-        """
-        context["rooms"] = room_data #所属するルーム達
-        context["room_chats"] = rooms_chats #所属するルームとチャット内容
-
         return context
-
-    #ユーザーが所属するルームのみ取得
-    def _rooms_get(self,data):
-        rooms = list()
-        for i in data:
-            if i.room not in rooms:
-                rooms.append(i.room)
-        #print("room_data[0]:"+rooms[0])
-        return rooms
-
-    #ユーザーが所属するルームのchatlist(ユーザ名,ルーム名,チャット内容)を返却
-    def _rooms_chat_get(self,room_data,chat_data):
-        chats = [[] for i in range(len(room_data))]
-        for i in chat_data:
-            if i.room in room_data:
-                room_index = room_data.index(i.room)#ただのlistに変換
-                chats[room_index].append([i.name,i.text,i.time.strftime('%Y/%m/%d %H:%M:%S'),i.icon.icon.url,])
-        return chats
 
 class UserChangeView(LoginRequiredMixin, generic.FormView):
     template_name = 'registration/profile_edit.html'
@@ -138,6 +108,7 @@ class TestView(generic.FormView):
     def form_valid(self, form):
         return super().form_valid(form)
 
+
 #本番用500errorを詳細に書く
 from django.views.decorators.csrf import requires_csrf_token
 from django.http import HttpResponseServerError
@@ -152,9 +123,35 @@ def my_customized_server_error(request, template_name='500.html'):
 
 import django_filters
 from rest_framework import viewsets, filters
-from .models import Chat
-from .serializer import ChatSerializer
+from rest_framework import generics
+from .models import Chat,Room
+from .serializer import ChatSerializer,RoomSerializer
 
-class ChatViewSet(viewsets.ModelViewSet):
-    queryset = Chat.objects.all()
+# class ChatViewSet(generics.RetrieveAPIView):
+#     queryset = Chat.objects.all()
+#     serializer_class = ChatSerializer
+    # lookup_field = 'room'
+
+class ChatViewSet(generics.ListAPIView):
     serializer_class = ChatSerializer
+
+    #api_chat/かapi_chat/strかで場合分け
+    def get_queryset(self):
+        if len(self.kwargs) == 0:
+            return Chat.objects.all()
+        else:
+            category = self.kwargs['room']
+            return Chat.objects.filter(room=category)
+
+class RoomViewSet(generics.ListAPIView):
+    serializer_class = RoomSerializer
+    queryset = Room.objects.all()
+
+    def get_queryset(self):
+        user_id = self.kwargs['meta']
+        return Room.objects.filter(meta=user_id)
+
+class GreetView(generic.FormView):
+    template_name = 'ajax_test.html'  # テンプレート名(htmlファイル名)
+    form_class = forms.GreetForm
+    success_url = reverse_lazy('ajax_test')

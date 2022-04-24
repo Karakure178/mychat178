@@ -1,0 +1,117 @@
+<h1>Let's Greeting!</h1>
+<div id="result">
+    <button type="click" id="test">ユーザ1が持つルームリスト</button>
+    <button type="click" id="test2">きのこルームのチャットリスト</button>
+    <ul id="list_message"></ul>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"
+    integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+<script>
+    // 送信ボタンにイベントリスナーを設定。内部に Ajax 処理を記述
+    $("#test").click(function (event) {
+        event.preventDefault();
+        var room_data;
+        $.ajax({
+            url: "http://127.0.0.1:8000/accounts/api_room/1",
+            type: 'get',
+            dataType: 'json',
+            timeout: 10000,
+        }).done(function (data) {
+            room_data = data;
+            console.log(room_data);
+        })
+
+        $.ajax({
+            url: "http://127.0.0.1:8000/accounts/api_chat/",
+            type: 'get',
+            dataType: 'json',
+            timeout: 10000,
+        }).done(function (data) {
+            for (let i = 0; i < data.length; i++) {
+                //$("#result").append("<p>" + data[i].text + "</p>");
+                // rooms_get(data);
+            }
+
+            let rooms_list = rooms_get(room_data);
+            console.log(rooms_list[0]);
+
+            //rooms_add(rooms_chat_get(rooms_list, data),3);
+            let j = rooms_chat_get(rooms_list, data);
+            console.log(j[0].length);
+            console.log(j[0][0][1]);
+            rooms_add(j,0,"kai");
+        })
+    });
+    
+    
+    //user.idからroom.filterで所属ルームを回収・rooms_get()でリスト化、rooms_chat_getでチャット内容を取得と。
+    function rooms_get(data) {
+        rooms = [];
+        for (let i = 0; i < data.length; i++) {
+            if (rooms.includes(data[i].room) == false) {
+                rooms.push(data[i].room);
+            }
+        }
+        console.log("room_data:" + rooms.length);
+        return rooms;
+    }
+
+    //ユーザーが所属するルームのchatlist(ユーザ名,ルーム名,チャット内容)を返却
+    function rooms_chat_get(room_data, chat_data) {
+        let chats = Array(room_data.length).fill().map((_, i) => []);
+        for (let i = 0; i < chat_data.length; i++) {
+            if (room_data.includes(chat_data[i].room)) {
+                //console.log(chat_data[i].room + ":" + chat_data[i].name);
+                let room_index = room_data.indexOf(chat_data[i].room);
+                //console.log(":room_index:" + room_index);
+                chats[room_index].push([chat_data[i].name, chat_data[i].text, chat_data[i].time, chat_data[i].icon
+                    .icon,
+                ]);
+                //console.log(chat_data[i].icon.icon);
+            }
+        }
+        //console.log(chats);
+        return chats;
+    }
+
+    function rooms_add(room_chat, room_index,strInputUserName) {
+        let g_elementListMessage = document.getElementById("list_message");
+        for (let i = 0; i < room_chat[room_index].length; i++) {
+            /*補足
+            room_chat[room_index][i][0] = chat.name
+            room_chat[room_index][i][1] = chat.text
+            room_chat[room_index][i][2] = chat.time
+            */
+            let elementLi = document.createElement("li");
+
+            //自分のコメントはtalk_left,それ以外はtalk_rightにクラスを変える
+            if (strInputUserName == room_chat[room_index][i][0]) {
+                elementLi.classList.add('talk_left');
+            } else {
+                elementLi.classList.add("talk_right");
+            }
+
+            //DBのiconをdivに追加
+            let faceIconDiv = document.createElement("div");
+            faceIconDiv.classList.add('faceicon');
+            let elementIcon = document.createElement("img");
+            elementIcon.src = room_chat[room_index][i][3];
+            faceIconDiv.append(elementIcon);
+            elementLi.append(faceIconDiv);
+
+            let SaysDiv = document.createElement("div");
+            SaysDiv.classList.add('says');
+            let childP = document.createElement("p");
+            childP.textContent = room_chat[room_index][i][0] + "] " + room_chat[room_index][i][1];
+            SaysDiv.append(childP);
+            elementLi.append(SaysDiv);
+
+            g_elementListMessage.append(elementLi); // リストの一番下に追加
+
+            let timeP = document.createElement("p");
+            timeP.textContent = room_chat[room_index][i][2];
+            g_elementListMessage.append(timeP);
+        }
+    }
+</script>
