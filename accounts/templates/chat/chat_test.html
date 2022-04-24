@@ -52,7 +52,7 @@
         <div class="sbs-line" id="text_roomname">
         </div>
     </div>
-    <div class="article">
+    <div class="article" id="article">
         <div class="chat_list">
             <div id="text_username"></div>
             <ul id="list_message"></ul>
@@ -143,7 +143,17 @@
         //以下にルームのDB記述を追加
         ajax_get(area.value, "{{ user.id }}", strInputUserName);
 
+
     }
+
+    $(document).ajaxStop(function () {
+        //一番最後に発火してほしい。
+        //$(window).scrollTop($('.message_input').position().top);
+        console.log("こんにちは");
+        //let list = document.getElementById('article');
+        //list.scrollTo(0, list.scrollHeight);
+    });
+
 
     //もしラジオボタンが変化したらルームを変更する。
     let radio_btns = document.querySelectorAll(`input[type='radio']`);
@@ -160,7 +170,7 @@
         let room_data; //ajax_room_data
 
         $.ajax({
-            url: "{% url 'api_room_int' meta=user.id %}" ,
+            url: "{% url 'api_room_int' meta=user.id %}",
             type: 'get',
             dataType: 'json',
             timeout: 10000,
@@ -258,6 +268,7 @@
             timeP.textContent = room_chat[room_index][i][2];
             g_elementListMessage.append(timeP);
         }
+
     }
 
 
@@ -336,6 +347,7 @@
         console.log('On Open Event =>', ev);
         console.log('DOM fully loaded and parsed');
         onsubmitButton_JoinChat(radio_btns[0]);
+
     }
 </script>
 {% endblock %}
