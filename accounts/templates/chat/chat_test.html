@@ -160,7 +160,7 @@
         let room_data; //ajax_room_data
 
         $.ajax({
-            url: "{% url 'api_room_int' %}" +"/"+ user_id,
+            url: "{% url 'api_room_int' meta=user.id %}" ,
             type: 'get',
             dataType: 'json',
             timeout: 10000,
