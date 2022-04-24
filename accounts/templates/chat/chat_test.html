@@ -160,7 +160,7 @@
         let room_data; //ajax_room_data
 
         $.ajax({
-            url: "http://127.0.0.1:8000/accounts/api_room/" + user_id,
+            url: "{% url 'api_room' %}" + user_id,
             type: 'get',
             dataType: 'json',
             timeout: 10000,
@@ -169,7 +169,7 @@
         })
 
         $.ajax({
-            url: "http://127.0.0.1:8000/accounts/api_chat/",
+            url: "{% url 'api_chat' %}",
             type: 'get',
             dataType: 'json',
             timeout: 10000,
