@@ -179,7 +179,8 @@
         })
 
         $.ajax({
-            url: "{% url 'api_chat' %}",
+            //ここ徐長だから変更すべき、このままだと100万件でも取る羽目になる
+            url: "{% url 'api_chat'  %}",
             type: 'get',
             dataType: 'json',
             timeout: 10000,
