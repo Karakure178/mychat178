@@ -46,6 +46,9 @@
         </li>
         {% endif %}
         {% endfor %}
+        <div class="room_adds">
+            <a href="{% url 'room_add' %}"><img src="{% static 'image/s256_f_business_43_0bg.png' %}"></a>
+        </div>
     </ul>
 
     <div class="header">
@@ -169,6 +172,10 @@
     function ajax_get(room_name, user_id, strInputUserName) {
         let room_data; //ajax_room_data
 
+        let url_mask = "{% url 'api_chat' %}";
+        let chat_url = url_mask+room_name;
+        console.log(chat_url);
+
         $.ajax({
             url: "{% url 'api_room_int' meta=user.id %}",
             type: 'get',
@@ -180,7 +187,7 @@
 
         $.ajax({
             //ここ徐長だから変更すべき、このままだと100万件でも取る羽目になる
-            url: "{% url 'api_chat'  %}",
+            url: chat_url,
             type: 'get',
             dataType: 'json',
             timeout: 10000,

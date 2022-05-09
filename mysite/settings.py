@@ -2,9 +2,13 @@ from pathlib import Path
 import os
 import dj_database_url
 
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SECRET_KEY = os.environ['SECRET_KEY']
+
+try:
+    SECRET_KEY = os.environ['SECRET_KEY']
+except KeyError: 
+    from .local_settings import *
+
 
 DEBUG = True
 

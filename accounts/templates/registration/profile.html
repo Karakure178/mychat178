@@ -26,8 +26,9 @@
                 <button class="btn_edit" onClick="changeProfileEdit()">プロフィール編集</button>
             </div>
             <h2>{{ user.username }}</h2>
-            <p><a href="{% url 'logout' %}">Log Out</a></p>
             <p><a href="{% url 'room_add' %}">ルーム新規作成</a></p>
+            <p><a href="{% url 'logout' %}">Log Out</a></p>
+
         </div>
     </div>
 </div>

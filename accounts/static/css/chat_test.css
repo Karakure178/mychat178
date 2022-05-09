@@ -108,7 +108,7 @@ li {
     /* これ外すと左に寄る。 */
 }
 
-/* プロフィールのアイコン */
+/* chat内のアイコン */
 .faceicon img {
     width: 60px;
     height: auto;
@@ -279,3 +279,17 @@ form input{
     color: #fff;
 }
 /* LINEルーム アイコン 名前 チェックポイントここまで*/
+
+
+/* ルーム新規作成ボタン */
+.room_adds img{
+    position:fixed;
+    left:170px;
+    bottom:50px;
+    width: 50px;
+    max-width: 50px;
+    background: #fff;
+    border: none;
+    border-radius: 50%;
+    box-shadow: none;
+}

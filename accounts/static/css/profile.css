@@ -46,18 +46,25 @@ body {
 /* メニューバーここまで */
 
 .header {
+    display: flex;
     grid-area: header;
-    background: blue;
+    justify-content: center;
+    align-items: center;
+    background: #263047;
     margin-top:10px;
     margin-left:10px;
     margin-right:10px;
+}
+
+.header img{
+    width: 100vw;
 }
 
 .profile {
     grid-area: profile;
     background-color: rgb(113, 147, 193);
     overflow-y: auto;
-    margin-top:10px;
+    /* margin-top:10px; */
     margin-left:10px;
     margin-right:10px;    
 }

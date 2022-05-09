@@ -5,23 +5,15 @@
 <div>
     <img>
     <h1>ルーム新規作成</h1>
-    <p>{{ user.username }}さん、こんにちは。</p>
+    <p>新規作成するルーム名と招待するユーザーを選択してください。</p>
     <form action="{% url 'room_add' %}" method="post">
         {% csrf_token %}
         {{ form.as_table }}
         <tr><td></td><td><input type="submit" value="新規作成"></td></tr>
     </form>
-    <p><a href="{% url 'logout' %}">Log Out</a></p>    
+    <p><a href="{% url 'chat_test' %}">チャットに戻る</a></p>    
 </div>
 
 <script>
-    // function changeLocation() {//ここでルーム移動を指定
-    //     window.location.href = "http://127.0.0.1:8000/accounts/room/" + roomSelect.value;
-    // }
-    // let roomSelect = document.getElementById('roomList');//htmlのoptionから指定されたvalueを取得
-    // //roomSelect.options[2].selected = true;//謎
-
-    // let checkButton = document.getElementById('checkButton');//動かすボタンを取得
-    // checkButton.addEventListener('click', changeLocation);//取得したぼたんが発火したら指定したroomサイトに移動
 </script>
 {% endblock %}
