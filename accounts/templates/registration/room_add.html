@@ -1,19 +1,64 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block content %}
-<div>
+<div style="padding:1em;">
     <img>
-    <h1>ルーム新規作成</h1>
-    <p>新規作成するルーム名と招待するユーザーを選択してください。</p>
-    <form action="{% url 'room_add' %}" method="post">
+    <div class="jumbotron">
+        <h1>ルーム新規作成</h1>
+        <p>新規作成するルーム名と招待するユーザーを選択してください。</p>
+    </div>
+    <form action="{% url 'room_add' %}" class="form-horizontal" method="post">
         {% csrf_token %}
-        {{ form.as_table }}
-        <tr><td></td><td><input type="submit" value="新規作成"></td></tr>
+        <div class="form-group">
+            <label for='room-name' class="col-sm-4 control-label">ルーム名:</label>
+            <div class='col-sm-8'>{{form.room|add_class:"form-room"}}</div>
+        </div>
+        <div class="form-group">
+            <label for='room-name' class="col-sm-4 control-label">招待するユーザー:</label>
+            <div class='col-sm-8 '>
+                <div class="sample">
+                    {% for choice in form.meta.field.queryset %}
+                    <input name='meta' id='id_meta_{{ choice.id }}' type='checkbox' value='{{ choice.id }}' />
+                    <label for='id_meta_{{ choice.id }}'>{{ choice.username }}</label>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class='form-group'>
+            <div class='col-sm-8'>
+                <button type="submit" class="btn btn-primary">新規作成</button>
+            </div>
+        </div>
     </form>
-    <p><a href="{% url 'chat_test' %}">チャットに戻る</a></p>    
+    <p><a href="{% url 'chat_test' %}">チャットに戻る</a></p>
 </div>
+<style>
+    .sample input {
+        display: none;
+    }
 
+    .sample label {
+        display: block;
+        width: 100px;
+        margin: 0;
+        border-right: 1px solid #abb2b7;
+        background: #bdc3c7;
+        color: #555e64;
+        font-size: 14px;
+        text-align: center;
+        line-height: 1;
+        margin: 5px;
+        padding: 5px;
+        border-radius: 3px 3px 3px 3px;
+    }
+
+    .sample input[type="checkbox"]:checked+label {
+        background-color: #a1b91d;
+        color: #fff;
+    }
+</style>
 <script>
 </script>
 {% endblock %}

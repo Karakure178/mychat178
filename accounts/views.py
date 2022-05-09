@@ -28,7 +28,7 @@ from django.contrib import messages
 class RoomAddView(LoginRequiredMixin, generic.FormView):
     template_name = "registration/room_add.html"    
     form_class = forms.RoomAddForm
-    success_url = reverse_lazy('profile')  # リダイレクト先URL
+    success_url = reverse_lazy('chat_test')  # リダイレクト先URL
 
     def form_valid(self, form):
         event = form.save(commit=False)
