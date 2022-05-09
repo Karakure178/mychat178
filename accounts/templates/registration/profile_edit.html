@@ -1,6 +1,6 @@
 
 
-{% extends 'base2.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block content %}
@@ -12,7 +12,7 @@
                 <form class="ui form" action="" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{form.as_p}}
-                    <button class="ui orange button" type="submit">確認</button>
+                    <button class="ui orange button" type="submit">OK</button>
                 </form>
                 <tr>
                     <td>{{ user.icon.description }}</td>

@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "channels",
     'django_cleanup.apps.CleanupConfig',# django-cleanup
     'rest_framework',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [

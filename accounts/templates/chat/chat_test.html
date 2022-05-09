@@ -116,6 +116,13 @@
         return roomDecode;
     }
 
+    //チャットでスクロール位置を取得して一番上ならajax発火
+    $("#article").scroll(function(){
+        if($(this).scrollTop() == 0){
+            console.log("0だよ！");
+        }
+    });
+
     //chatルームに参加したら実行
     function onsubmitButton_JoinChat(area) {
         let strInputUserName = "{{ user.username }}";
