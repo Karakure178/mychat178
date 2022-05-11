@@ -132,16 +132,53 @@ from .serializer import ChatSerializer,RoomSerializer
 #     serializer_class = ChatSerializer
     # lookup_field = 'room'
 
+# class ChatViewSet(generics.ListAPIView):
+#     serializer_class = ChatSerializer
+
+#     #api_chat/かapi_chat/strかで場合分け
+#     def get_queryset(self):
+#         if len(self.kwargs) == 0:
+#             return Chat.objects.all()
+#         else:
+#             category = self.kwargs['room']
+#             cs = Chat.objects.filter(room=category)
+#             print(cs[0])
+#             return cs
+    
+
 class ChatViewSet(generics.ListAPIView):
     serializer_class = ChatSerializer
-
-    #api_chat/かapi_chat/strかで場合分け
     def get_queryset(self):
         if len(self.kwargs) == 0:
             return Chat.objects.all()
-        else:
+        elif len(self.kwargs) == 1:
             category = self.kwargs['room']
             return Chat.objects.filter(room=category)
+        else:
+            category = self.kwargs['room']
+            count = self.kwargs['count']
+            print(399)
+            return self._chat_count_return(category,count)
+    def _chat_count_return(self,room_name,count):
+        chat_query = Chat.objects.filter(room=room_name)
+        chat_list = list()
+        if len(chat_query) <=count*10 and len(chat_query) >= (count-1)*10:
+            #チャット数がカウント×10より少なくて、かつカウント-1×10より多い時,
+            # (count=1で10よりチャットが少ないけど、7あるからそこまで回す)
+            print(99)
+            for i in range((count-1)*10,len(chat_query)):
+                chat_list.append(chat_query[i])
+            print(chat_list)
+            return list(chat_list)
+        else:
+            #チャット配列がカウント×10より多い
+            #1の時は0-10回す
+            print(str(len(chat_query))+":"+str(count*10))
+            for i in range((count-1)*10,count*10):
+                chat_list.append(chat_query[i])
+            print(chat_list)
+            return list(chat_list)
+
 
 class RoomViewSet(generics.ListAPIView):
     serializer_class = RoomSerializer

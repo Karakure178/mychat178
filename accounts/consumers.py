@@ -6,7 +6,6 @@ import datetime
 from accounts.models import Chat
 from users.models import User
 from channels.db import database_sync_to_async
-from asgiref.sync import sync_to_async
 
 # ChatConsumerクラス: WebSocketからの受け取ったものを処理するクラス
 class ChatConsumer( AsyncWebsocketConsumer ):
@@ -125,3 +124,42 @@ def decode_roomname(room_name):
         roomDecode = roomDecode + chr(int(i))
     #chr(int)でascii文字列に変換
     return roomDecode
+
+
+# class NotiConsumer( AsyncWebsocketConsumer ):
+#     # コンストラクタ
+#     def __init__( self, *args, **kwargs ):
+#         super().__init__( *args, **kwargs )
+#         self.strGroupName = ''
+#         self.strUserName = ''
+#         self.strRoomName = "" #追加
+
+#     # WebSocket接続時の処理
+#     async def connect( self ):
+#         await self.accept()
+
+#     async def disconnect( self, close_code ):
+#         # チャットからの離脱
+#         await self.leave_chat()
+
+#     async def receive( self, text_data ):
+#         # 受信データをJSONデータに復元
+#         text_data_json = json.loads( text_data )
+
+#         # チャットへの参加時の処理
+#         if( 'noti' == text_data_json.get( 'data_type' ) ):
+#             self.strUserName = text_data_json['username']
+#             self.strRoomName = text_data_json['roomname']
+#             await self.join_chat( self.strRoomName )
+
+#         # チャットからの離脱時の処理
+#         elif( 'leave' == text_data_json.get( 'data_type' ) ):
+#             await self.leave_chat()
+
+#     # 通知機能への参加
+#     async def join_chat( self, strRoomName ):
+#         # グループに参加
+#         #self.strGroupName = 'chat_%s' % strRoomName
+#         self.strGroupName = 'chat_' + strRoomName
+#         print(self.strGroupName)
+#         await self.channel_layer.group_add( self.strGroupName, self.channel_name )

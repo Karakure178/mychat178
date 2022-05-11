@@ -76,6 +76,7 @@
 </script>
 
 <script>
+    let count = 1;
     const g_elementInputUserName = document.getElementById("input_username");
     const g_elementInputRoomName = document.getElementById("input_roomname");
 
@@ -116,10 +117,33 @@
         return roomDecode;
     }
 
-    //チャットでスクロール位置を取得して一番上ならajax発火
-    $("#article").scroll(function(){
-        if($(this).scrollTop() == 0){
+    //チャットでスクロール位置を取得して一番上まで来たらajax発火,ajaxのチャット合計量がcount×10より多いなら再読み込み(ajax再発火)する
+    $("#article").scroll(function () {
+        if ($(this).scrollTop() == 0) {
             console.log("0だよ！");
+
+            let elements = document.getElementsByName('s2');
+            let target;
+            //現在のルーム名を取得
+            for (let i = 0; i < elements.length; i++) {
+                if (elements.item(i).checked) {
+                    target = elements.item(i).value;
+                }
+            }
+
+            let url_mask = "{% url 'api_chat' %}";
+            let chat_url = url_mask + target;
+            $.ajax({
+                url: chat_url,
+                type: 'get',
+                dataType: 'json',
+                timeout: 10000,
+            }).done(function (data) {
+                if (data.length >= count * 10) {
+                    count += 1;
+                    ajax_get(target, "{{ user.id }}", "{{ user.username }}");
+                }
+            })
         }
     });
 
@@ -149,15 +173,15 @@
         while (g_elementListMessage.lastChild) {
             g_elementListMessage.removeChild(g_elementListMessage.lastChild);
         }
+        //切り替え時にカウントも全部消す
+        count = 1;
 
         //以下にルームのDB記述を追加
         ajax_get(area.value, "{{ user.id }}", strInputUserName);
-
-
     }
 
     $(document).ajaxStop(function () {
-        //一番最後に発火してほしい。
+        //一番最後に発火 DB読み込み後、スクロールバーを一番下にする
         //$(window).scrollTop($('.message_input').position().top);
         console.log("こんにちは");
         let list = document.getElementById('article');
@@ -180,7 +204,8 @@
         let room_data; //ajax_room_data
 
         let url_mask = "{% url 'api_chat' %}";
-        let chat_url = url_mask+room_name;
+        let chat_url = url_mask + room_name;
+        chat_url = url_mask + room_name + "/" + count;
         console.log(chat_url);
 
         $.ajax({
@@ -200,6 +225,7 @@
             timeout: 10000,
         }).done(function (data) {
             //console.log(room_data.length);
+            console.log(data);
             let rooms_list = rooms_get(room_data);
             let room_index;
             for (let i = 0; i < rooms_list.length; i++) {
@@ -234,7 +260,8 @@
                 //console.log(chat_data[i].room + ":" + chat_data[i].name);
                 let room_index = room_data.indexOf(chat_data[i].room);
                 //console.log(":room_index:" + room_index);
-                chats[room_index].push([chat_data[i].name, chat_data[i].text, chat_data[i].time, chat_data[i].icon
+                chats[room_index].push([chat_data[i].name, chat_data[i].text, chat_data[i].time, chat_data[i]
+                    .icon
                     .icon,
                 ]);
                 //console.log(chat_data[i].icon.icon);
@@ -306,15 +333,16 @@
 
     // WebSocketからメッセージ受信時の処理
     g_socket.onmessage = (event) => {
+        console.log("hallo!");
         let strInputUserName = "{{ user.username }}";
         // テキストデータをJSONデータにデコード
         let data = JSON.parse(event.data);
 
-        // 自身がまだ参加していないときは、無視。
-        if (g_elementTextRoomName.value != data["roomname"]) {
-            console.log("はいってませーん");
-            return;
-        }
+        // 自身がまだ参加していないときは、無視(そもそも受信されない)
+        //if (g_elementTextRoomName.value != data["roomname"]) {
+        //  console.log("はいってませーん");
+        //return;
+        //}
         console.log(g_elementTextRoomName.value + "::" + data["roomname"]);
 
         // メッセージの整形
