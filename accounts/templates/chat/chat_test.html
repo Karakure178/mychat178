@@ -302,15 +302,19 @@
                 SaysDiv.classList.add('says');
                 let childP = document.createElement("pre");
 
+                
+                //送信時の日時を表示
+                let timeP = document.createElement("pre");
+
                 //自分のコメントはtalk_left,それ以外はtalk_rightにクラスを変える
                 if (strInputUserName == room_chat[room_index][i][0]) {
                     elementLi.classList.add('talk_left');
+                    timeP.classList.add('talk_left');
                 } else {
                     elementLi.classList.add("talk_right");
+                    timeP.classList.add('talk_left');
                 }
 
-                //送信時の日時を表示
-                let timeP = document.createElement("pre");
                 //.01101433+09:00みたいなのを取り除く
                 timeP.textContent = room_chat[room_index][i][2].replace("T", " ").replace(/\.\d.*/, '');
                 g_elementListMessage.prepend(timeP);
@@ -344,11 +348,16 @@
                 SaysDiv.classList.add('says');
                 let childP = document.createElement("pre");
 
+                //送信時の日時を表示
+                let timeP = document.createElement("pre");
+
                 //自分のコメントはtalk_left,それ以外はtalk_rightにクラスを変える
                 if (strInputUserName == room_chat[room_index][i][0]) {
                     elementLi.classList.add('talk_left');
+                    timeP.classList.add('talk_left');
                 } else {
                     elementLi.classList.add("talk_right");
+                    timeP.classList.add('talk_left');
                 }
 
                 //room_chat[room_index][i][0] + "] "でkai]
@@ -358,8 +367,7 @@
                 elementLi.append(SaysDiv);
                 g_elementListMessage.append(elementLi); // リストの一番下に追加
 
-                //送信時の日時を表示
-                let timeP = document.createElement("pre");
+
                 //.01101433+09:00みたいなのを取り除く
                 timeP.textContent = room_chat[room_index][i][2].replace("T", " ").replace(/\.\d.*/, '');
                 g_elementListMessage.append(timeP);
