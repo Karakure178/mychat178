@@ -7,6 +7,8 @@ urlpatterns = [
     path('login/', Login.as_view(), name='login'),
     path('profile/', HomeView.as_view(), name='profile'),
     path('profile_edit/', UserChangeView.as_view(), name='profile_edit'),
+#    path('help/', HelpView.as_view(), name='help'),
+
 
 
     path('logout/', Logout.as_view(), name='logout'),

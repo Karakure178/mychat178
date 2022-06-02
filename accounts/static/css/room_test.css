@@ -162,6 +162,8 @@ body {
     text-align: center;
     padding: 1em;
 }
+/* ルーム内ヘッダー ここまで*/
+
 
 /*ルーム内吹き出し*/
 .talk_left,
@@ -182,6 +184,17 @@ body {
     justify-content: flex-end;
     /* これ外すと左に寄る。 */
 }
+
+/*ルーム内のコメント入力欄*/
+form{
+    display: flex;
+}
+#input_message{
+
+}
+/*ルーム内のコメント入力欄ここまで*/
+
+
 
 /* プロフィールのアイコン */
 .faceicon img {
@@ -252,5 +265,4 @@ body {
     right: -26px;
     border-left: 22px solid #99dddd;
 }
-
 /*ルーム内吹き出しここまで*/

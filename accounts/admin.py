@@ -9,7 +9,7 @@ class RoomAdmin(admin.ModelAdmin):
 admin.site.register(models.Room,RoomAdmin)
 
 class ChatAdmin(admin.ModelAdmin):
-    list_display = ("name","room","text","time","icon")
+    list_display = ("id","name","room","text","time","icon")
 admin.site.register(models.Chat,ChatAdmin)
 
 

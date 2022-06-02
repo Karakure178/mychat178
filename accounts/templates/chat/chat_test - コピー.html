@@ -134,17 +134,14 @@
             let url_mask = "{% url 'api_chat' %}";
             let chat_url = url_mask + target;
             $.ajax({
-                //ここ100万件でもリロード毎時読み込みしかねない処理、要修正
                 url: chat_url,
                 type: 'get',
                 dataType: 'json',
                 timeout: 10000,
             }).done(function (data) {
-                //console.log(data);
                 if (data.length >= count * 10) {
                     count += 1;
                     ajax_get(target, "{{ user.id }}", "{{ user.username }}");
-                    console.log("ajax再発火しているよ");
                 }
             })
         }
@@ -204,12 +201,12 @@
 
     //room_name=所属するルーム,user_id=現在のユーザid,strInputUserName=現在のユーザ名
     function ajax_get(room_name, user_id, strInputUserName) {
-        let room_data; //ユーザが持ってるルーム数とルーム名を取得
+        let room_data; //ajax_room_data
 
         let url_mask = "{% url 'api_chat' %}";
         let chat_url = url_mask + room_name;
         chat_url = url_mask + room_name + "/" + count;
-        //console.log(chat_url);
+        console.log(chat_url);
 
         $.ajax({
             url: "{% url 'api_room_int' meta=user.id %}",
@@ -221,7 +218,7 @@
         })
 
         $.ajax({
-            //修正済み
+            //ここ徐長だから変更すべき、このままだと100万件でも取る羽目になる
             url: chat_url,
             type: 'get',
             dataType: 'json',
@@ -277,92 +274,62 @@
     //ajaxで受け取ったDBをタグ追加して表示
     //chat内容、room_index=所属するルームの要素,strInputUserName=現在のユーザ名
     function rooms_add(room_chat, room_index, strInputUserName) {
-        /*補足
-        room_chat[room_index][i][0] = chat.name
-        room_chat[room_index][i][1] = chat.text
-        room_chat[room_index][i][2] = chat.time
-        */
-        if (count > 1) {
-            //countが1以上の場合は上に追加していく。リストを逆順で読んで。
-            for (let i = room_chat[room_index].length-1; i >= 0; i--) {
-                //countが１以上の時
-                //console.log("tstsetsstst");
-                //console.log(room_chat[room_index][i][0]);
+        for (let i = 0; i < room_chat[room_index].length; i++) {
+            /*補足
+            room_chat[room_index][i][0] = chat.name
+            room_chat[room_index][i][1] = chat.text
+            room_chat[room_index][i][2] = chat.time
+            */
+            let elementLi = document.createElement("li");
 
-                let elementLi = document.createElement("li");
-                //DBのiconをdivに追加
-                let faceIconDiv = document.createElement("div");
-                faceIconDiv.classList.add('faceicon');
-                let elementIcon = document.createElement("img");
-                elementIcon.src = room_chat[room_index][i][3];
-                faceIconDiv.append(elementIcon);
-                elementLi.append(faceIconDiv);
-
-                let SaysDiv = document.createElement("div");
-                SaysDiv.classList.add('says');
-                let childP = document.createElement("pre");
-
-                //自分のコメントはtalk_left,それ以外はtalk_rightにクラスを変える
-                if (strInputUserName == room_chat[room_index][i][0]) {
-                    elementLi.classList.add('talk_left');
-                } else {
-                    elementLi.classList.add("talk_right");
-                }
-
-                //送信時の日時を表示
-                let timeP = document.createElement("pre");
-                //.01101433+09:00みたいなのを取り除く
-                timeP.textContent = room_chat[room_index][i][2].replace("T", " ").replace(/\.\d.*/, '');
-                g_elementListMessage.prepend(timeP);
-
-                //room_chat[room_index][i][0] + "] "でkai]になる
-                //改行はn0x0anが含まれていた場合
-                childP.textContent = room_chat[room_index][i][1].replace("n0x0an", "\n");
-                SaysDiv.append(childP);
-                elementLi.append(SaysDiv);
-                g_elementListMessage.prepend(elementLi);
-                //g_elementListMessage.append(elementLi); // リストの一番下に追加
+            //自分のコメントはtalk_left,それ以外はtalk_rightにクラスを変える
+            if (strInputUserName == room_chat[room_index][i][0]) {
+                elementLi.classList.add('talk_left');
+            } else {
+                elementLi.classList.add("talk_right");
             }
-        } else {
-            //countが1の時はリストをそのまま読んで下に追加する。
-            for (let i = 0; i < room_chat[room_index].length; i++) {
-                //countが1の時
-                //console.log("tstsetsstst");
-                //console.log(room_chat[room_index][i][0]);
 
+            //DBのiconをdivに追加
+            let faceIconDiv = document.createElement("div");
+            faceIconDiv.classList.add('faceicon');
+            let elementIcon = document.createElement("img");
+            elementIcon.src = room_chat[room_index][i][3];
+            faceIconDiv.append(elementIcon);
+            elementLi.append(faceIconDiv);
 
-                let elementLi = document.createElement("li");
-                //DBのiconをdivに追加
-                let faceIconDiv = document.createElement("div");
-                faceIconDiv.classList.add('faceicon');
-                let elementIcon = document.createElement("img");
-                elementIcon.src = room_chat[room_index][i][3];
-                faceIconDiv.append(elementIcon);
-                elementLi.append(faceIconDiv);
+            let SaysDiv = document.createElement("div");
+            SaysDiv.classList.add('says');
+            let childP = document.createElement("pre");
 
-                let SaysDiv = document.createElement("div");
-                SaysDiv.classList.add('says');
-                let childP = document.createElement("pre");
+            if(count >1){
+            //countが１以上の時
+            //送信時の日時を表示
+            let timeP = document.createElement("pre");
+            //.01101433+09:00みたいなのを取り除く
+            timeP.textContent = room_chat[room_index][i][2].replace("T"," ").replace(/\.\d.*/, '');
+            g_elementListMessage.prepend(timeP);
 
-                //自分のコメントはtalk_left,それ以外はtalk_rightにクラスを変える
-                if (strInputUserName == room_chat[room_index][i][0]) {
-                    elementLi.classList.add('talk_left');
-                } else {
-                    elementLi.classList.add("talk_right");
-                }
+            //room_chat[room_index][i][0] + "] "でkai]になる
+            //改行はn0x0anが含まれていた場合
+            childP.textContent = room_chat[room_index][i][1].replace("n0x0an", "\n");
+            SaysDiv.append(childP);
+            elementLi.append(SaysDiv);
+            g_elementListMessage.prepend(elementLi);
+            //g_elementListMessage.append(elementLi); // リストの一番下に追加
+            }else{
+            //countが1の時
+            //room_chat[room_index][i][0] + "] "でkai]
+            //改行はn0x0anが含まれていた場合
+            childP.textContent = room_chat[room_index][i][1].replace("n0x0an", "\n");
+            SaysDiv.append(childP);
+            elementLi.append(SaysDiv);
+            g_elementListMessage.append(elementLi); // リストの一番下に追加
 
-                //room_chat[room_index][i][0] + "] "でkai]
-                //改行はn0x0anが含まれていた場合
-                childP.textContent = room_chat[room_index][i][1].replace("n0x0an", "\n");
-                SaysDiv.append(childP);
-                elementLi.append(SaysDiv);
-                g_elementListMessage.append(elementLi); // リストの一番下に追加
-
-                //送信時の日時を表示
-                let timeP = document.createElement("pre");
-                //.01101433+09:00みたいなのを取り除く
-                timeP.textContent = room_chat[room_index][i][2].replace("T", " ").replace(/\.\d.*/, '');
-                g_elementListMessage.append(timeP);
+            //送信時の日時を表示
+            let timeP = document.createElement("pre");
+            //.01101433+09:00みたいなのを取り除く
+            timeP.textContent = room_chat[room_index][i][2].replace("T"," ").replace(/\.\d.*/, '');
+            g_elementListMessage.append(timeP);
             }
         }
 
@@ -461,8 +428,7 @@
                 //console.log(document.getElementById("input_message").value);
             } else {
                 //改行はn0x0anが含まれていた場合
-                document.getElementById("input_message").value = document.getElementById("input_message").value
-                    .replace("\n", "n0x0an");
+                document.getElementById("input_message").value = document.getElementById("input_message").value.replace("\n", "n0x0an");
                 console.log(document.getElementById("input_message").value);
                 e.preventDefault();
                 $form.submit();

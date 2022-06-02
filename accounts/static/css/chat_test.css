@@ -183,12 +183,24 @@ li {
 
 }
 
+/*ルーム内のコメント入力欄*/
+form{
+    display: flex;
+}
+
+#input_message{
+    display: flex;
+}
 
 /* submit見た目 */
 form input{
     color: black;
 }
 /* submit見た目ここまで */
+
+/*ルーム内のコメント入力欄ここまで*/
+
+
 
 
 /* LINEルーム アイコン 名前 チェックポイント*/
@@ -212,6 +224,7 @@ form input{
     text-align: center;
     line-height: 1;
     transition: .2s;
+    padding-left: 5px;
 }
 
 .roomButton {
@@ -243,6 +256,7 @@ form input{
     font-weight: bold;
     margin-top: 10px;
     text-align: left;
+    /* padding-left: 5px; */
 }
 
 /* 通知ボタン見た目*/
@@ -292,4 +306,14 @@ form input{
     border: none;
     border-radius: 50%;
     box-shadow: none;
+}
+
+/* コメント入力欄 */
+textarea {
+    position:fixed;
+    left:240px;
+    bottom:10px;
+    max-width: 84%;
+    min-width: 84%;
+    min-height: 50px;
 }
