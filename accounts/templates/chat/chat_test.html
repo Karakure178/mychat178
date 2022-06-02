@@ -10,7 +10,7 @@
     <div class="menu">
         <a href="{% url 'chat_test' %}"><img src="{% static 'image/chat.svg' %}"></a>
         <a href="{% url 'profile' %}"><img src="{% static 'image/user.svg' %}"></a>
-        <img src="{% static 'image/users.svg' %}">
+        {% comment %} <img src="{% static 'image/users.svg' %}"> {% endcomment %}
     </div>
     <ul class="nav">
         {% for room_i in room_names %}

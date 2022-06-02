@@ -284,12 +284,12 @@ form input{
 }
 
 .li2 input[type="radio"]:checked+.switch-on {
-    background-color: darkgray;
+    background-color: rgb(232, 226, 226);
     color: #fff;
 }
 
 .li2 input[type="radio"]:checked+.switch-off {
-    background-color: darkgray;
+    background-color: rgb(232, 226, 226);
     color: #fff;
 }
 /* LINEルーム アイコン 名前 チェックポイントここまで*/
